@@ -1,16 +1,34 @@
-import { parsePlayers } from "../admin/playerParser.js";
-// NOTE: This file intentionally does not persist channel IDs.
-// The restart timer channel must be provided via RESTART_TIMER_CHANNEL_ID.
+function parsePlayers(raw) {
+  const text = String(raw ?? "").trim();
+  if (!text) return [];
+
+  const lines = text
+    .split(/\r?\n/)
+    .map((l) => l.trim())
+    .filter(Boolean);
+
+  if (lines.length < 2) return [];
+
+  // Expected format:
+  // PlayerList
+  // steamid1,steamid2,steamid3,
+  // name1,name2,name3,
+  const idLine = lines[1];
+
+  return idLine
+    .split(",")
+    .map((id) => id.trim())
+    .filter(Boolean);
+}
 
 function parseRestartHoursUtc() {
-  // Configure with RESTART_HOURS_UTC="0,6,12,18" (default) or e.g. "0,4,8,12,16,20".
   const raw = String(process.env.RESTART_HOURS_UTC ?? "0,6,12,18").trim();
+
   const hours = raw
     .split(",")
     .map((s) => Number(String(s).trim()))
     .filter((n) => Number.isFinite(n) && n >= 0 && n <= 23);
 
-  // De-dup + sort
   return Array.from(new Set(hours)).sort((a, b) => a - b);
 }
 
@@ -24,7 +42,7 @@ function getNextRestartUtc(now = new Date()) {
     const candidate = new Date(Date.UTC(y, m, d, h, 0, 0));
     if (candidate > now) return candidate;
   }
-  // Next day at the first scheduled hour
+
   const first = hours[0] ?? 0;
   return new Date(Date.UTC(y, m, d + 1, first, 0, 0));
 }
@@ -37,13 +55,23 @@ function formatCountdown(ms) {
   return h > 0 ? `${h}h ${m}m` : `${m}m`;
 }
 
+function withTimeout(promise, ms, label = "Operation") {
+  return Promise.race([
+    promise,
+    new Promise((_, reject) =>
+      setTimeout(() => reject(new Error(`${label} timed out after ${ms}ms`)), ms)
+    ),
+  ]);
+}
 
 async function lockVoiceChannel(channel, { logger } = {}) {
-  // Only guild channels have permission overwrites
   if (!channel?.guild) return;
 
-  const me = channel.guild.members.me ?? (await channel.guild.members.fetchMe().catch(() => null));
+  const me =
+    channel.guild.members.me ??
+    (await channel.guild.members.fetchMe().catch(() => null));
   if (!me) return;
+
   const perms = channel.permissionsFor(me);
   if (!perms?.has?.(["ViewChannel", "ManageChannels"])) {
     logger?.warn?.(
@@ -52,166 +80,145 @@ async function lockVoiceChannel(channel, { logger } = {}) {
     return;
   }
 
-  // For voice/stat channels you typically want them visible but not joinable
   const everyoneRoleId = channel.guild.roles.everyone.id;
 
   try {
-    await channel.permissionOverwrites.edit(everyoneRoleId, {
-      Connect: false,
-    }, { reason: "Auto-lock stat voice channel on startup" });
+    await channel.permissionOverwrites.edit(
+      everyoneRoleId,
+      { Connect: false },
+      { reason: "Auto-lock stat voice channel on startup" }
+    );
   } catch (e) {
     logger?.warn?.(
       `Failed to lock channel ${channel?.id}: ${e?.code ?? ""} ${e?.message ?? e}`
     );
   }
 }
-/**
- * Updates:
- *  - a dedicated "player count" voice channel name with the current online player count
- *  - a dedicated "next restart" voice channel name with the time until next scheduled restart (GMT/UTC)
- *
- * The restart timer channel MUST be provided via RESTART_TIMER_CHANNEL_ID.
- * If it's not provided, the restart timer updater will be skipped.
- */
+
 export function startPlayerCountUpdater({ client, rcon, config, logger }) {
   const playerCountChannelId = config.channels.playerCountChannelId;
-  if (!playerCountChannelId) {
-    logger?.warn?.("PLAYER_COUNT_CHANNEL_ID not set; skipping player count updater.");
-    return;
-  }
+  const restartTimerChannelId = config.channels.restartTimerChannelId;
 
-  const intervalMs = Number(process.env.PLAYER_COUNT_UPDATE_MS ?? 90_000);
+  const playerIntervalMs = Number(process.env.PLAYER_COUNT_UPDATE_MS ?? 300000);
+  const restartIntervalMs = Number(process.env.RESTART_TIMER_UPDATE_MS ?? 300000);
+  const rconTimeoutMs = Number(process.env.RCON_QUERY_TIMEOUT_MS ?? 10000);
 
   let lastPlayerName = null;
   let lastRestartName = null;
-  let running = false;
+
+  let playerRunning = false;
+  let restartRunning = false;
+
   let playerLocked = false;
   let restartLocked = false;
+
   let warnedPlayerPerms = false;
   let warnedRestartPerms = false;
+
   let disablePlayerCount = false;
   let disableRestartTimer = false;
 
-  async function getRestartChannelFromEnv() {
-    const envId = (config.channels.restartTimerChannelId ?? "").trim();
-    if (!envId) {
-      logger?.warn?.("RESTART_TIMER_CHANNEL_ID not set; skipping restart timer updater.");
-      return null;
-    }
+  async function fetchManagedChannel(channelId, label) {
+    if (!channelId) return null;
 
-    const ch = await client.channels.fetch(envId).catch((e) => {
+    const channel = await client.channels.fetch(channelId).catch((e) => {
       logger?.warn?.(
-        `Failed to fetch restart timer channel ${envId}: ${e?.code ?? ""} ${e?.message ?? e}`
+        `Failed to fetch ${label} channel ${channelId}: ${e?.code ?? ""} ${e?.message ?? e}`
       );
       return null;
     });
 
-    return ch;
+    return channel;
   }
 
-  async function tick() {
-    if (disablePlayerCount && disableRestartTimer) return;
-    if (running) return;
-    running = true;
+  async function ensureManageable(channel, label, warnedFlagSetter) {
+    if (!channel?.guild) return true;
+
+    const me =
+      channel.guild.members.me ??
+      (await channel.guild.members.fetchMe().catch(() => null));
+    const perms = me ? channel.permissionsFor(me) : null;
+
+    if (!perms?.has?.(["ViewChannel", "ManageChannels"])) {
+      warnedFlagSetter(
+        `Cannot manage ${label} channel ${channel.id}: missing ViewChannel/ManageChannels (bot perms: ${perms?.toArray?.().join(", ") ?? "unknown"})`
+      );
+      return false;
+    }
+
+    return true;
+  }
+
+  async function updatePlayerCount() {
+    if (disablePlayerCount || playerRunning) return;
+
+    if (!playerCountChannelId) {
+      logger?.warn?.("PLAYER_COUNT_CHANNEL_ID not set; skipping player count updater.");
+      disablePlayerCount = true;
+      return;
+    }
+
+    playerRunning = true;
 
     try {
-      const playerCh = disablePlayerCount
-        ? null
-        : await client.channels.fetch(playerCountChannelId).catch((e) => {
-        logger?.warn?.(
-          `Failed to fetch player count channel ${playerCountChannelId}: ${e?.code ?? ""} ${e?.message ?? e}`
-        );
-        return null;
+      const playerCh = await fetchManagedChannel(playerCountChannelId, "player count");
+      if (!playerCh) {
+        disablePlayerCount = true;
+        return;
+      }
+
+      const manageable = await ensureManageable(playerCh, "player count", (msg) => {
+        if (!warnedPlayerPerms) {
+          logger?.warn?.(msg);
+          warnedPlayerPerms = true;
+        }
       });
 
-      if (!playerCh && !disablePlayerCount) {
-        logger?.warn?.(`Player count channel not found: ${playerCountChannelId}`);
+      if (!manageable) {
         disablePlayerCount = true;
+        return;
       }
 
-      if (playerCh && playerCh.guild) {
-        const me = playerCh.guild.members.me ?? (await playerCh.guild.members.fetchMe().catch(() => null));
-        const perms = me ? playerCh.permissionsFor(me) : null;
-        if (!perms?.has?.(["ViewChannel", "ManageChannels"])) {
-          if (!warnedPlayerPerms) {
-            logger?.warn?.(
-              `Cannot manage player count channel ${playerCountChannelId}: missing ViewChannel/ManageChannels (bot perms: ${perms?.toArray?.().join(", ") ?? "unknown"})`
-            );
-            warnedPlayerPerms = true;
-          }
-          disablePlayerCount = true;
-        }
-      }
-
-      if (playerCh && !playerLocked) {
+      if (!playerLocked) {
         await lockVoiceChannel(playerCh, { logger });
         playerLocked = true;
       }
 
-      // Query players
       let raw;
       try {
-        raw = await rcon.sendRaw("playerlist");
-      } catch (e) {
-        // Back-compat fallback for servers that use the older alias.
-        raw = await rcon.sendRaw("players");
-      }
-      const players = parsePlayers(raw);
-      const count = players.length;
-
-      if (playerCh) {
-        const newPlayerName = `🦖 Players: ${count}`;
-        if (newPlayerName !== lastPlayerName && playerCh.name !== newPlayerName) {
-          await playerCh
-            .setName(newPlayerName, "Auto-updating Evrima player count")
-            .catch((e) => {
-              logger?.warn?.(`Failed to rename player count channel: ${e?.code ?? ""} ${e?.message ?? e}`);
-              // Stop hammering the API if Discord says we can't access/manage it.
-              if (e?.code === 50001 || e?.code === 50013) disablePlayerCount = true;
-            });
-        }
-        lastPlayerName = newPlayerName;
+        raw = await withTimeout(
+          rcon.sendRaw("playerlist"),
+          rconTimeoutMs,
+          "RCON playerlist"
+        );
+      } catch {
+        raw = await withTimeout(
+          rcon.sendRaw("players"),
+          rconTimeoutMs,
+          "RCON players"
+        );
       }
 
-      // Restart timer
-      const restartCh = disableRestartTimer ? null : await getRestartChannelFromEnv();
-      if (restartCh && restartCh.guild) {
-        const me = restartCh.guild.members.me ?? (await restartCh.guild.members.fetchMe().catch(() => null));
-        const perms = me ? restartCh.permissionsFor(me) : null;
-        if (!perms?.has?.(["ViewChannel", "ManageChannels"])) {
-          if (!warnedRestartPerms) {
+      const count = parsePlayers(raw).length;
+      const newPlayerName = `🦖 Players: ${count}`;
+
+      if (newPlayerName !== lastPlayerName && playerCh.name !== newPlayerName) {
+        await playerCh
+          .setName(newPlayerName, "Auto-updating Evrima player count")
+          .catch((e) => {
             logger?.warn?.(
-              `Cannot manage restart timer channel ${restartCh.id}: missing ViewChannel/ManageChannels (bot perms: ${perms?.toArray?.().join(", ") ?? "unknown"})`
+              `Failed to rename player count channel: ${e?.code ?? ""} ${e?.message ?? e}`
             );
-            warnedRestartPerms = true;
-          }
-          disableRestartTimer = true;
-        }
+            if (e?.code === 50001 || e?.code === 50013) {
+              disablePlayerCount = true;
+            }
+          });
       }
 
-      if (restartCh && !disableRestartTimer) {
-        const next = getNextRestartUtc(new Date());
-        const until = next.getTime() - Date.now();
-        const newRestartName = `🕛 Next Restart: ${formatCountdown(until)}`;
-
-        if (restartCh && !restartLocked) {
-          await lockVoiceChannel(restartCh, { logger });
-          restartLocked = true;
-        }
-
-        if (newRestartName !== lastRestartName && restartCh.name !== newRestartName) {
-          await restartCh
-            .setName(newRestartName, "Auto-updating next restart countdown (GMT/UTC)")
-            .catch((e) => {
-              logger?.warn?.(`Failed to rename restart timer channel: ${e?.code ?? ""} ${e?.message ?? e}`);
-              if (e?.code === 50001 || e?.code === 50013) disableRestartTimer = true;
-            });
-        }
-        lastRestartName = newRestartName;
-      }
+      lastPlayerName = newPlayerName;
     } catch (e) {
       logger?.warn?.(`Player count update failed: ${e?.message ?? e}`);
-      // Best-effort: show unknown if we can
+
       try {
         const ch = await client.channels.fetch(playerCountChannelId).catch(() => null);
         if (ch) {
@@ -223,10 +230,73 @@ export function startPlayerCountUpdater({ client, rcon, config, logger }) {
         }
       } catch { }
     } finally {
-      running = false;
+      playerRunning = false;
     }
   }
 
-  tick();
-  setInterval(tick, intervalMs);
+  async function updateRestartTimer() {
+    if (disableRestartTimer || restartRunning) return;
+
+    if (!restartTimerChannelId) {
+      logger?.warn?.("RESTART_TIMER_CHANNEL_ID not set; skipping restart timer updater.");
+      disableRestartTimer = true;
+      return;
+    }
+
+    restartRunning = true;
+
+    try {
+      const restartCh = await fetchManagedChannel(restartTimerChannelId, "restart timer");
+      if (!restartCh) {
+        disableRestartTimer = true;
+        return;
+      }
+
+      const manageable = await ensureManageable(restartCh, "restart timer", (msg) => {
+        if (!warnedRestartPerms) {
+          logger?.warn?.(msg);
+          warnedRestartPerms = true;
+        }
+      });
+
+      if (!manageable) {
+        disableRestartTimer = true;
+        return;
+      }
+
+      if (!restartLocked) {
+        await lockVoiceChannel(restartCh, { logger });
+        restartLocked = true;
+      }
+
+      const next = getNextRestartUtc(new Date());
+      const until = next.getTime() - Date.now();
+      const newRestartName = `🕛 Next Restart: ${formatCountdown(until)}`;
+
+      if (newRestartName !== lastRestartName && restartCh.name !== newRestartName) {
+        await restartCh
+          .setName(newRestartName, "Auto-updating next restart countdown (GMT/UTC)")
+          .catch((e) => {
+            logger?.warn?.(
+              `Failed to rename restart timer channel: ${e?.code ?? ""} ${e?.message ?? e}`
+            );
+            if (e?.code === 50001 || e?.code === 50013) {
+              disableRestartTimer = true;
+            }
+          });
+      }
+
+      lastRestartName = newRestartName;
+    } catch (e) {
+      logger?.warn?.(`Restart timer update failed: ${e?.message ?? e}`);
+    } finally {
+      restartRunning = false;
+    }
+  }
+
+  updatePlayerCount();
+  updateRestartTimer();
+
+  setInterval(updatePlayerCount, playerIntervalMs);
+  setInterval(updateRestartTimer, restartIntervalMs);
 }

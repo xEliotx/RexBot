@@ -198,7 +198,9 @@ function buildPosterButtons() {
  */
 export async function upsertNewPlayerGuideBook(client) {
   const channel = await client.channels.fetch(GUIDE_CHANNEL_ID).catch(() => null);
-  if (!channel || !channel.isTextBased()) throw new Error("Guide channel not found / not text-based.");
+  if (!channel || !channel.isTextBased()) {
+    throw new Error("Guide channel not found / not text-based.");
+  }
 
   const store = await loadStore();
   const messageId = store[ENTRY_KEY]?.messageId ?? null;
@@ -214,17 +216,19 @@ export async function upsertNewPlayerGuideBook(client) {
 
   if (messageId) {
     const msg = await channel.messages.fetch(messageId).catch(() => null);
-    if (msg) {
+
+    // Only edit if THIS bot authored the message
+    if (msg && msg.author?.id === client.user.id) {
       await msg.edit(payload);
       return;
     }
   }
 
+  // Otherwise send a fresh message
   const sent = await channel.send(payload);
   store[ENTRY_KEY] = { channelId: channel.id, messageId: sent.id };
   await saveStore(store);
 }
-
 /**
  * Handle button clicks globally (call this from interactionCreate).
  */

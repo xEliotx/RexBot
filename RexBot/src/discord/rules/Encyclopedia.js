@@ -117,7 +117,8 @@ export async function upsertEncyclopediaEntry(channel, entryKey, pages) {
 
     if (existingId) {
       const msg = await channel.messages.fetch(existingId).catch(() => null);
-      if (msg) {
+
+      if (msg && msg.author?.id === channel.client.user.id) {
         await msg.edit(payload);
       } else {
         const newMsg = await channel.send(payload);
@@ -127,19 +128,19 @@ export async function upsertEncyclopediaEntry(channel, entryKey, pages) {
       const newMsg = await channel.send(payload);
       messageIds[i] = newMsg.id;
     }
-  }
 
-  // Delete extra old messages if guide got shorter
-  if (messageIds.length > chunks.length) {
-    const extras = messageIds.slice(chunks.length);
-    for (const id of extras) {
-      const msg = await channel.messages.fetch(id).catch(() => null);
-      if (msg) await msg.delete().catch(() => null);
+    // Delete extra old messages if guide got shorter
+    if (messageIds.length > chunks.length) {
+      const extras = messageIds.slice(chunks.length);
+      for (const id of extras) {
+        const msg = await channel.messages.fetch(id).catch(() => null);
+        if (msg) await msg.delete().catch(() => null);
+      }
+      store[entryKey].messageIds = messageIds.slice(0, chunks.length);
+    } else {
+      store[entryKey].messageIds = messageIds;
     }
-    store[entryKey].messageIds = messageIds.slice(0, chunks.length);
-  } else {
-    store[entryKey].messageIds = messageIds;
-  }
 
-  await saveStore(store);
+    await saveStore(store);
+  }
 }

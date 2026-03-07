@@ -52,11 +52,11 @@ export async function execute(interaction, { logger }) {
   // 1) Update-in-place New Player Guide / Encyclopedia (your new system)
   try {
     await upsertNewPlayerGuideBook(interaction.client);
-	results.push("✅ New Player Guide (book) updated <#1469392438345859112>");
+    results.push("✅ New Player Guide (book) updated <#1469392438345859112>");
   } catch (err) {
- 	logger?.error?.("New Player Guide (book) failed:", err);
-  	results.push(`❌ New Player Guide failed: ${err?.message ?? "Unknown error"}`);
-}
+    logger?.error?.("New Player Guide (book) failed:", err);
+    results.push(`❌ New Player Guide failed: ${err?.message ?? "Unknown error"}`);
+  }
 
 
   // 2) Your original rulesPosts updater (kept intact)
@@ -79,10 +79,9 @@ export async function execute(interaction, { logger }) {
       if (existingMessageId) {
         const msg = await channel.messages.fetch(existingMessageId).catch(() => null);
 
-        if (msg) {
+        if (msg && msg.author?.id === interaction.client.user.id) {
           await msg.edit({ embeds: [post.embed], components: [] });
 
-          // 🔒 lock after update
           try {
             await lockChannel(channel);
             results.push(`✅ Updated + locked <#${post.channelId}>`);

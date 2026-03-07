@@ -79,6 +79,7 @@ export function startServerStatusUpdater({ client, rcon, config, logger }) {
 
       let online = false;
       try {
+        await rcon.connect();
         // Use a real query, since you confirmed srv:details responds reliably.
         await rcon.sendCommand("srv:details");
         online = true;

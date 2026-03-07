@@ -1,34 +1,27 @@
-# RexBot (The Isle: Evrima)
+# RexBot (sanitized build)
 
-## Quick map of the codebase
+This build keeps the core Discord bot, ticketing, welcome flow, rules posting, and the RCON-backed player count/server status updaters.
 
-### Entry + wiring
-- `src/index.js` – boots the Discord client, initializes RCON, and routes interactions.
-- `src/config.js` – environment-based config (loads `.env`).
+Removed from this package:
+- live `.env` secrets
+- `node_modules` and cache folders
+- Steam link flow
+- garage/token storage features
+- FTP helpers and related token/safelog code
+- admin RCON moderation tools
+- `playerdata` slash command
 
-### Discord
-- `src/discord/commands/*` – slash commands (`/ping`, `/setup`, etc.)
-- `src/discord/interaction/routeInteraction.js` – routes buttons/selects/modals by `customId` prefix.
-- `src/discord/admin/*` – admin panel handlers + audit helpers.
-- `src/discord/link/*` – steam link flow (uses `data/links.json`).
-- `src/discord/ui/panels.js` – message builders for panels.
-- `src/discord/guards/*` – channel/permission guards.
-
-### Server integration
-- `src/rcon/*` – RCON client + player list parsing.
-- `src/ftp/*` – FTP helpers (currently used for bans JSON).
-
-### Storage
-- `src/storage/jsonStore.js` – atomic JSON store with a write lock.
-- `src/storage/stores.js` – instantiated stores (e.g., links).
+Kept in this package:
+- bot startup and slash command registration
+- rules / guide system
+- ticket panel and inactivity watcher
+- welcome system
+- player count updater
+- server status updater
+- Evrima RCON client required by the two status updaters
 
 ## Setup
-1. Copy `.env.example` to `.env` and fill values.
-2. Install dependencies: `npm i`
-3. Start the bot: `npm start`
-
-## Garage / Tokens
-- `src/garage/` token + storage services
-- `src/discord/garage/` Discord UI handlers for token actions
-- `data/tokens.json` runtime token storage
-- `data/garage.json` runtime snapshot storage
+1. Copy `.env.example` to `.env` and fill in your values.
+2. Run `npm install`.
+3. Run `npm run commands:register`.
+4. Run `npm start`.

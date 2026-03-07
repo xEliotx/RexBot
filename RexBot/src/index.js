@@ -1,10 +1,9 @@
 import { config } from "./config.js";
 import { logger } from "./utils/logger.js";
 import { createClient } from "./discord/client.js";
-//test
+
 import { ping } from "./discord/commands/ping.js";
 import { setup } from "./discord/commands/setup.js";
-import { playerdata } from "./discord/commands/playerdata.js";
 import { postRules } from "./discord/rules/postRulesCommand.js";
 import { handleNewPlayerGuideBookButtons } from "./discord/rules/NewPlayerGuideBook.js";
 
@@ -32,10 +31,8 @@ const session = new Map();
 const commandMap = new Map([
   [ping.data.name, ping],
   [setup.data.name, setup],
-  [playerdata.data.name, playerdata],
   [postRules.data.name, postRules],
   [ticketPanel.data.name, ticketPanel],
-
 ]);
 
 client.once("clientready", () => {
@@ -49,37 +46,27 @@ client.on("interactionCreate", async (interaction) => {
   try {
     const ctx = { config, client, rcon, session };
 
-    // Slash commands
     if (interaction.isChatInputCommand()) {
       const cmd = commandMap.get(interaction.commandName);
       if (!cmd) return;
-
-      // Channel guard (per command)
       if (!(await requireChannel(interaction, cmd.scope, config.channels))) return;
-        
       await cmd.execute(interaction, ctx);
       return;
     }
-  
-   	// New Player Guide "book" buttons (prev/next)
-	const handled = await handleNewPlayerGuideBookButtons(interaction);
-	if (handled) return;
 
-	// Everything else (buttons / selects / modals)
-	await routeInteraction(interaction, ctx);
+    const handled = await handleNewPlayerGuideBookButtons(interaction);
+    if (handled) return;
 
-      
+    await routeInteraction(interaction, ctx);
   } catch (err) {
     logger.error("interactionCreate error:", err);
-
-    // Best-effort error response
     if (interaction.isRepliable()) {
       const already = interaction.deferred || interaction.replied;
       const payload = { content: "Something went wrong. Check the bot logs.", ...EPHEMERAL };
       try {
         if (already) await interaction.followUp(payload);
         else await interaction.reply(payload);
-      } catch { }
+      } catch {}
     }
   }
 });
@@ -111,15 +98,12 @@ client.on("messageCreate", async (message) => {
 
     const now = Date.now();
     const last = Number(topic.match(/last_activity=(\d+)/)?.[1] ?? 0);
-
-    // avoid hammering topic edits
     if (now - last < 60_000) return;
 
     let newTopic = topic.includes("last_activity=")
       ? topic.replace(/last_activity=\d+/, `last_activity=${now}`)
       : `${topic};last_activity=${now}`;
 
-    // any activity clears warning
     newTopic = newTopic.includes("warned=")
       ? newTopic.replace(/warned=\d+/, "warned=0")
       : `${newTopic};warned=0`;
