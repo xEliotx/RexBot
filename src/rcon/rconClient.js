@@ -57,6 +57,7 @@ export class EvrimaRconClient {
     this.socket = null;
     this.connected = false;
     this.connecting = false;
+    this._connectPromise = null;
 
     this._pending = []; // FIFO pending request resolvers
     this._rxBuffer = Buffer.alloc(0);
@@ -72,59 +73,70 @@ export class EvrimaRconClient {
 
   async connect(timeoutMs = DEFAULT_TIMEOUT_MS) {
     if (this.connected) return;
-    if (this.connecting) throw new Error("RCON connect already in progress");
+
+    // If a connection attempt is already happening, wait for it
+    if (this._connectPromise) {
+      await this._connectPromise;
+      return;
+    }
+
     if (!this.host || !this.port) throw new Error("RCON host/port not set");
 
     this.connecting = true;
     this._closedSinceLastRequest = false;
 
-    try {
-      const socket = new net.Socket();
-      this.socket = socket;
+    this._connectPromise = (async () => {
+      try {
+        const socket = new net.Socket();
+        this.socket = socket;
 
-      socket.on("data", (chunk) => this._onData(chunk));
-      socket.on("error", (err) => this._onError(err));
-      socket.on("close", () => this._onClose());
+        socket.on("data", (chunk) => this._onData(chunk));
+        socket.on("error", (err) => this._onError(err));
+        socket.on("close", () => this._onClose());
 
-      // Help keep long-lived WAN connections alive.
-      socket.setKeepAlive(true, 30_000);
+        socket.setKeepAlive(true, 30_000);
 
-      await new Promise((resolve, reject) => {
-        const onErr = (e) => {
-          socket.off("connect", onConnect);
-          reject(e);
-        };
-        const onConnect = () => {
-          socket.off("error", onErr);
-          resolve();
-        };
+        await new Promise((resolve, reject) => {
+          const onErr = (e) => {
+            socket.off("connect", onConnect);
+            reject(e);
+          };
+          const onConnect = () => {
+            socket.off("error", onErr);
+            resolve();
+          };
 
-        socket.once("error", onErr);
-        socket.once("connect", onConnect);
-        socket.connect(this.port, this.host);
-      });
+          socket.once("error", onErr);
+          socket.once("connect", onConnect);
+          socket.connect(this.port, this.host);
+        });
 
-      this.logger?.info?.(
-        `RCON TCP connected to ${this.host}:${this.port}. Sending AUTH...`
-      );
+        this.logger?.info?.(
+          `RCON TCP connected to ${this.host}:${this.port}. Sending AUTH...`
+        );
 
-      // AUTH: 0x01 + password (NO null terminator)
-      const authFrame = Buffer.concat([Buffer.from([0x01]), Buffer.from(this.password, "utf8")]);
+        const authFrame = Buffer.concat([
+          Buffer.from([0x01]),
+          Buffer.from(this.password, "utf8"),
+        ]);
 
-      const authResp = await this._request(authFrame, timeoutMs);
-      const authText = authResp.text;
+        const authResp = await this._request(authFrame, timeoutMs);
+        const authText = authResp.text;
 
-      if (!/password accepted/i.test(authText)) {
-        this.disconnect();
-        throw new Error(`RCON auth failed: ${authText || "No response"}`);
+        if (!/password accepted/i.test(authText)) {
+          this.disconnect();
+          throw new Error(`RCON auth failed: ${authText || "No response"}`);
+        }
+
+        this.connected = true;
+        this.logger?.info?.("RCON authenticated.");
+      } finally {
+        this.connecting = false;
+        this._connectPromise = null;
       }
+    })();
 
-      this.connected = true;
-      this.logger?.info?.("RCON authenticated.");
-    } finally {
-      // Never leave the instance stuck in a "connecting" state.
-      this.connecting = false;
-    }
+    await this._connectPromise;
   }
 
   disconnect() {
@@ -140,7 +152,7 @@ export class EvrimaRconClient {
     if (this.socket) {
       try {
         this.socket.destroy();
-      } catch {}
+      } catch { }
       this.socket = null;
     }
 
@@ -255,6 +267,8 @@ export class EvrimaRconClient {
     this.logger?.warn?.("RCON socket closed.");
     this._closedSinceLastRequest = true;
     this.connected = false;
+    this.connecting = false;
+    this.socket = null;
   }
 
   _request(frame, timeoutMs) {
