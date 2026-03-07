@@ -149,7 +149,6 @@ export function startPlayerCountUpdater({ client, rcon, config, logger }) {
       }
 
       // Query players
-      await rcon.connect();
       let raw;
       try {
         raw = await rcon.sendRaw("playerlist");
