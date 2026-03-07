@@ -1,7 +1,7 @@
 import { config } from "./config.js";
 import { logger } from "./utils/logger.js";
 import { createClient } from "./discord/client.js";
-
+//test
 import { ping } from "./discord/commands/ping.js";
 import { setup } from "./discord/commands/setup.js";
 import { playerdata } from "./discord/commands/playerdata.js";
