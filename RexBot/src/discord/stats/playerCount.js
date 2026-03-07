@@ -22,7 +22,7 @@ function parsePlayers(raw) {
 }
 
 function parseRestartHoursUtc() {
-  const raw = String(process.env.RESTART_HOURS_UTC ?? "0,6,12,18").trim();
+  const raw = String(process.env.RESTART_HOURS_UTC ?? "9,15").trim();
 
   const hours = raw
     .split(",")
