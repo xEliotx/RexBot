@@ -9,8 +9,7 @@ import { handleNewPlayerGuideBookButtons } from "./discord/rules/NewPlayerGuideB
 
 import { EvrimaRconClient } from "./rcon/rconClient.js";
 import { requireChannel } from "./discord/guards/channels.js";
-import { startPlayerCountUpdater } from "./discord/stats/playerCount.js";
-import { startServerStatusUpdater } from "./discord/stats/serverStatus.js";
+import { startStatusEmbedUpdater } from "./discord/stats/statusEmbed.js";
 import { routeInteraction } from "./discord/interaction/routeInteraction.js";
 import { EPHEMERAL } from "./discord/util/ephemeral.js";
 import { handleMemberJoin } from "./discord/welcome/welcomeHandlers.js";
@@ -37,8 +36,7 @@ const commandMap = new Map([
 
 client.once("clientready", () => {
   logger.info(`Logged in as ${client.user.tag}`);
-  startPlayerCountUpdater({ client, rcon, config, logger });
-  startServerStatusUpdater({ client, rcon, config, logger });
+  startStatusEmbedUpdater({ client, rcon, logger });
   startTicketInactivityWatcher({ client, config, logger });
 });
 
@@ -66,7 +64,7 @@ client.on("interactionCreate", async (interaction) => {
       try {
         if (already) await interaction.followUp(payload);
         else await interaction.reply(payload);
-      } catch {}
+      } catch { }
     }
   }
 });
