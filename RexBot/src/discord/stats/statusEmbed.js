@@ -95,7 +95,13 @@ async function lockStatusChannel(channel) {
 
     await channel.permissionOverwrites.edit(
         everyoneRoleId,
-        { SendMessages: false },
+        {
+            SendMessages: false,
+            SendMessagesInThreads: false,
+            CreatePublicThreads: false,
+            CreatePrivateThreads: false,
+            AddReactions: false,
+        },
         { reason: "Lock server status channel" }
     );
 }
@@ -123,7 +129,7 @@ function buildStatusEmbed({ online, playerCount, nextRestart, nowUtc }) {
         .addFields(
             {
                 name: "👥 Players Online",
-                value: online ? `**${playerCount}**` : "`Unknown`",
+                value: online ? (playerCount == null ? "`Unknown`" : `**${playerCount}**`) : "`Unknown`",
                 inline: true,
             },
             {
@@ -188,8 +194,17 @@ export function startStatusEmbedUpdater({ client, rcon, logger }) {
             }
 
             let online = false;
-            let playerCount = 0;
+            let playerCount = null;
 
+            // First try a dedicated status check
+            try {
+                await withTimeout(rcon.sendCommand("srv:details"), timeoutMs, "RCON srv:details");
+                online = true;
+            } catch {
+                // ignore here, we'll fall back to player queries
+            }
+
+            // Then try player list. If this works, the server is definitely reachable.
             try {
                 let raw;
                 try {
@@ -201,7 +216,9 @@ export function startStatusEmbedUpdater({ client, rcon, logger }) {
                 playerCount = parsePlayers(raw).length;
                 online = true;
             } catch {
-                online = false;
+                // leave playerCount as null
+                // if srv:details already worked, online stays true
+                // otherwise online stays false
             }
 
             const nowUtc = new Date();
