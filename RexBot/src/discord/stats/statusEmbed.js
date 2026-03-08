@@ -102,45 +102,59 @@ async function lockStatusChannel(channel) {
 
 function buildStatusEmbed({ online, playerCount, nextRestart, nowUtc }) {
     const countdown = formatCountdown(nextRestart.getTime() - nowUtc.getTime());
-    const nextRestartText = formatUtcTime(nextRestart);
-    const lastUpdatedText = formatUtcTime(nowUtc);
+    const restartTime = formatUtcTime(nextRestart);
+    const updatedTime = formatUtcTime(nowUtc);
+
+    const statusLine = online
+        ? "🟢 **SERVER ONLINE**"
+        : "🔴 **SERVER OFFLINE**";
 
     return new EmbedBuilder()
-        .setTitle("🦖 Blood & Bone — Live Server Status")
-        .setColor(online ? 0x57f287 : 0xed4245)
+        .setTitle("🦖 Blood & Bone Evrima")
+        .setColor(online ? 0x2ecc71 : 0xe74c3c)
+        .setThumbnail("https://media.discordapp.net/attachments/778652435227869214/1479990510142885928/logo.png?ex=69ae0c12&is=69acba92&hm=483be62858f6f38f6e94e7fecf3509578f65e3c5907c1c6be5884f90a5621e23&=&format=webp&quality=lossless&width=960&height=960")
         .setDescription(
-            online
-                ? "The server is currently **online** and reporting live data."
-                : "The server is currently **offline** or not responding to RCON."
+            `${statusLine}\n` +
+            `━━━━━━━━━━━━━━━━━━\n` +
+            `**Live Evrima server monitor**\n` +
+            `Tracking player count, restart cycle, and server availability.\n` +
+            `━━━━━━━━━━━━━━━━━━`
         )
         .addFields(
             {
-                name: "🟢 Status",
-                value: online ? "Online" : "Offline",
-                inline: true,
-            },
-            {
-                name: "👥 Players",
-                value: online ? String(playerCount) : "?",
+                name: "👥 Players Online",
+                value: online ? `**${playerCount}**` : "`Unknown`",
                 inline: true,
             },
             {
                 name: "⏰ Next Restart",
-                value: nextRestartText,
+                value: `**${restartTime}**`,
                 inline: true,
             },
             {
                 name: "⌛ Countdown",
-                value: countdown,
+                value: `**${countdown}**`,
+                inline: true,
+            },
+            {
+                name: "📡 Server Status",
+                value: online ? "`Healthy / Responding`" : "`Offline / No response`",
                 inline: true,
             },
             {
                 name: "🕒 Last Updated",
-                value: lastUpdatedText,
+                value: updatedTime,
+                inline: true,
+            },
+            {
+                name: "🌍 Time Zone",
+                value: "`GMT / UTC`",
                 inline: true,
             }
         )
-        .setFooter({ text: "Blood & Bone automated status feed" })
+        .setFooter({
+            text: "Blood & Bone • Automated Server Monitor",
+        })
         .setTimestamp(nowUtc);
 }
 
