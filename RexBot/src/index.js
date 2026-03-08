@@ -7,6 +7,7 @@ import { setup } from "./discord/commands/setup.js";
 import { postRules } from "./discord/rules/postRulesCommand.js";
 import { handleNewPlayerGuideBookButtons } from "./discord/rules/NewPlayerGuideBook.js";
 import { startPopulationUpdater } from "./discord/stats/populationUpdater.js";
+import { startDeathLogWatcher } from "./logs/deathLogWatcher.js";
 
 import { EvrimaRconClient } from "./rcon/rconClient.js";
 import { requireChannel } from "./discord/guards/channels.js";
@@ -40,6 +41,9 @@ client.once("clientready", () => {
   startStatusEmbedUpdater({ client, rcon, logger });
   startTicketInactivityWatcher({ client, config, logger });
   startPopulationUpdater({ client, rcon, channelId: "1479972419157491832" });
+  startDeathLogWatcher({
+    client, logFilePath: "C:/Users/Administrator/Desktop/TheIsleServer/TheIsle/Saved/Logs/TheIsle.log", channelId: "1480218203857752265", logger,
+  });
 });
 
 client.on("interactionCreate", async (interaction) => {
