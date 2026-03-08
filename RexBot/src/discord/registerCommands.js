@@ -6,11 +6,13 @@ import { setup } from "./commands/setup.js";
 import { poptest } from "./commands/poptest.js";
 import { postRules } from "./rules/postRulesCommand.js";
 import { ticketPanel } from "./tickets/ticketPanelCommand.js";
+import { rconplayers } from "./commands/rconplayers.js";
 
 const commands = [
   ping.data.toJSON(),
   setup.data.toJSON(),
   poptest.data.toJSON(),
+  rconplayers.data.toJSON(),
   postRules.data.toJSON(),
   ticketPanel.data.toJSON(),
 ];

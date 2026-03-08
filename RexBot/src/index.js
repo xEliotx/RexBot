@@ -6,6 +6,7 @@ import { ping } from "./discord/commands/ping.js";
 import { setup } from "./discord/commands/setup.js";
 import { postRules } from "./discord/rules/postRulesCommand.js";
 import { handleNewPlayerGuideBookButtons } from "./discord/rules/NewPlayerGuideBook.js";
+import { startPopulationUpdater } from "./discord/stats/populationUpdater.js";
 
 import { EvrimaRconClient } from "./rcon/rconClient.js";
 import { requireChannel } from "./discord/guards/channels.js";
@@ -38,6 +39,7 @@ client.once("clientready", () => {
   logger.info(`Logged in as ${client.user.tag}`);
   startStatusEmbedUpdater({ client, rcon, logger });
   startTicketInactivityWatcher({ client, config, logger });
+  startPopulationUpdater({ client, rcon, channelId: "1479972419157491832" });
 });
 
 client.on("interactionCreate", async (interaction) => {
