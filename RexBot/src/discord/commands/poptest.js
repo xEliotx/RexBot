@@ -1,28 +1,15 @@
-const { SlashCommandBuilder } = require("discord.js");
-const { buildPopulationEmbed } = require("../stats/populationEmbed");
+import { SlashCommandBuilder } from "discord.js";
+import { EPHEMERAL } from "../util/ephemeral.js";
+import { ChannelScope } from "../guards/channels.js";
 
-module.exports = {
-    data: new SlashCommandBuilder()
-        .setName("poptest")
-        .setDescription("Test the dinosaur population embed"),
+export const poptest = {
+  scope: ChannelScope.ANY,
+  data: new SlashCommandBuilder()
+    .setName("poptest")
+    .setDescription("Test command."),
 
-    async execute(interaction) {
-
-        const speciesCounts = {
-            Carnotaurus: 14,
-            Omniraptor: 11,
-            Deinosuchus: 6,
-            Stegosaurus: 9,
-            Gallimimus: 3,
-            Tyrannosaurus: 5,
-            Ceratosaurus: 4
-        };
-
-        const embed = buildPopulationEmbed(speciesCounts);
-
-        await interaction.reply({
-            embeds: [embed]
-        });
-
-    }
+  async execute(interaction) {
+    console.log("poptest execute reached");
+    await interaction.reply({ content: "poptest works ✅", ...EPHEMERAL });
+  },
 };

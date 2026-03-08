@@ -1,6 +1,6 @@
 // config/speciesEmojis.js
 
-module.exports = {
+export default {
     Allosaurus: "<:allosaurus:1480158072750997637>",
     Beipiaosaurus: "<:beipiaosaurus:1480158137444208732>",
     Carnotaurus: "<:carnotaurus:1480158193136042245>",
