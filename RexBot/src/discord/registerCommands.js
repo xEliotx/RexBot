@@ -7,6 +7,7 @@ import { poptest } from "./commands/poptest.js";
 import { postRules } from "./rules/postRulesCommand.js";
 import { ticketPanel } from "./tickets/ticketPanelCommand.js";
 import { rconplayers } from "./commands/rconplayers.js";
+import { playerdata } from "./commands/playerdata.js";
 
 const commands = [
   ping.data.toJSON(),
@@ -15,6 +16,7 @@ const commands = [
   rconplayers.data.toJSON(),
   postRules.data.toJSON(),
   ticketPanel.data.toJSON(),
+  playerdata.data.toJSON(),
 ];
 
 async function main() {

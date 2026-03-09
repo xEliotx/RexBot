@@ -54,7 +54,7 @@ export function buildPopulationEmbed(speciesCounts) {
     const sorted = Object.entries(speciesCounts).sort((a, b) => b[1] - a[1]);
 
     const embed = new EmbedBuilder()
-        .setTitle("🌍 Evrima Ecosystem Tracker")
+        .setTitle("🌍 Blood & Bone Ecosystem Tracker")
         .setColor(0x57f287)
         .setFooter({
             text: `Population Dashboard • Updated: ${new Date().toLocaleString()}`,

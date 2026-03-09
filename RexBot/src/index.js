@@ -17,6 +17,7 @@ import { EPHEMERAL } from "./discord/util/ephemeral.js";
 import { handleMemberJoin } from "./discord/welcome/welcomeHandlers.js";
 import { ticketPanel } from "./discord/tickets/ticketPanelCommand.js";
 import { startTicketInactivityWatcher } from "./discord/tickets/ticketInactivity.js";
+import { playerdata } from "./discord/commands/playerdata.js";
 
 const client = createClient();
 
@@ -32,6 +33,7 @@ const session = new Map();
 const commandMap = new Map([
   [ping.data.name, ping],
   [setup.data.name, setup],
+  [playerdata.data.name, playerdata],
   [postRules.data.name, postRules],
   [ticketPanel.data.name, ticketPanel],
 ]);

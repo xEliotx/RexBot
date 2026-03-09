@@ -106,17 +106,23 @@ async function lockStatusChannel(channel) {
     );
 }
 
-function buildStatusEmbed({ online, playerCount, nextRestart, nowUtc }) {
+function buildStatusEmbed({ online, restarting, playerCount, nextRestart, nowUtc }) {
     const countdown = formatCountdown(nextRestart.getTime() - nowUtc.getTime());
     const restartTime = formatUtcTime(nextRestart);
     const updatedTime = formatUtcTime(nowUtc);
 
-    const statusLine = online
-        ? "🟢 **SERVER ONLINE**"
-        : "🔴 **SERVER OFFLINE**";
+    let statusLine;
+
+    if (online) {
+        statusLine = "🟢 **SERVER ONLINE**";
+    } else if (restarting) {
+        statusLine = "🟠 **SERVER RESTARTING**";
+    } else {
+        statusLine = "🔴 **SERVER OFFLINE**";
+    }
 
     return new EmbedBuilder()
-        .setTitle("🦖 Blood & Bone Evrima")
+        .setTitle("🦖 Blood & Bone: The Mezosoic")
         .setColor(online ? 0x2ecc71 : 0xe74c3c)
         .setThumbnail("https://media.discordapp.net/attachments/778652435227869214/1479990510142885928/logo.png?ex=69ae0c12&is=69acba92&hm=483be62858f6f38f6e94e7fecf3509578f65e3c5907c1c6be5884f90a5621e23&=&format=webp&quality=lossless&width=960&height=960")
         .setDescription(
@@ -166,7 +172,7 @@ function buildStatusEmbed({ online, playerCount, nextRestart, nowUtc }) {
 
 export function startStatusEmbedUpdater({ client, rcon, logger }) {
     const channelId = String(process.env.STATUS_CHANNEL_ID ?? "").trim();
-    const intervalMs = Number(process.env.STATUS_UPDATE_MS ?? 60000);
+    const intervalMs = Number(process.env.STATUS_UPDATE_MS ?? 30000);
     const timeoutMs = Number(process.env.RCON_QUERY_TIMEOUT_MS ?? 10000);
 
     if (!channelId) {
@@ -194,14 +200,27 @@ export function startStatusEmbedUpdater({ client, rcon, logger }) {
             }
 
             let online = false;
+            let restarting = false;
             let playerCount = null;
+
+            // Ensure RCON connection is alive (handles server restarts)
+            if (!rcon.connected) {
+                try {
+                    await rcon.connect();
+                } catch { }
+            }
 
             // First try a dedicated status check
             try {
                 await withTimeout(rcon.sendCommand("srv:details"), timeoutMs, "RCON srv:details");
                 online = true;
             } catch {
-                // ignore here, we'll fall back to player queries
+                // Force reset of the RCON connection if the server restarted
+                try {
+                    rcon.disconnect();
+                } catch { }
+
+                online = false;
             }
 
             // Then try player list. If this works, the server is definitely reachable.
@@ -216,15 +235,22 @@ export function startStatusEmbedUpdater({ client, rcon, logger }) {
                 playerCount = parsePlayers(raw).length;
                 online = true;
             } catch {
-                // leave playerCount as null
-                // if srv:details already worked, online stays true
-                // otherwise online stays false
+                try {
+                    rcon.disconnect();
+                } catch { }
             }
 
             const nowUtc = new Date();
             const nextRestart = getNextRestartUtc(nowUtc);
-            const embed = buildStatusEmbed({ online, playerCount, nextRestart, nowUtc });
+            const restartWindowMs = 5 * 60 * 1000; // 5 minutes
 
+            const timeToRestart = nextRestart.getTime() - nowUtc.getTime();
+
+            if (!online && timeToRestart < restartWindowMs && timeToRestart > -restartWindowMs) {
+                restarting = true;
+            }
+
+            const embed = buildStatusEmbed({ online, restarting, playerCount, nextRestart, nowUtc });
             const store = await loadStore();
             const messageId = store.messageId ?? null;
 
