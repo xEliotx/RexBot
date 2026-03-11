@@ -203,8 +203,11 @@ export class EvrimaRconClient {
   }
 
   async _sendWithReconnectRetry(frame) {
-    // Serialize all requests to avoid response coalescing breaking FIFO.
-    this._queue = this._queue.then(() => this._sendWithReconnectRetryUnlocked(frame));
+    // Keep the queue alive even if a previous request failed.
+    this._queue = this._queue
+      .catch(() => { })
+      .then(() => this._sendWithReconnectRetryUnlocked(frame));
+
     return this._queue;
   }
 
