@@ -99,13 +99,16 @@ export async function handleMemberJoin(member, { config, logger }) {
             `**WELCOME <@${member.id}>**\n\n` +
             `You’ve entered the ecosystem. Survival is optional.\n\n` +
 			
-            `<a:308408ambersiren:1470858699013623888> **Announcements** → <#1465497725448491203>\n` +
-            `🔗 **Steam Linking** → <#1464629212764700844>\n\n` +
+            `📢 **Announcements** → <#1465497725448491203>\n` +
+            `🔗 **Steam Linking** → <#1464629212764700844>\n` +
+            `📂 **Dino-Storage** → <#1465518734780399787>\n` +
+            `🎁 **Reward-Center** → <#1479834219067998238>\n\n` +
 			
             `<a:3712rainbowreadrules:1470858722019508255> **Rules (READ THESE):**\n` +
             `• General → <#1462648417120682014>\n` +
             `• Carnivore → <#1462648847414202388>\n` +
-            `• Herbivore → <#1462648723254411366>\n\n` +
+            `• Herbivore → <#1462648723254411366>\n` +
+            `• Pack-Limits → <#1466464861289447664>\n\n` +
             
             `📔 **Encyclopedia**\n` +
             `• New to the game? → <#1469392438345859112>\n\n` +

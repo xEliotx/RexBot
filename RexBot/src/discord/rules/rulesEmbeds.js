@@ -275,6 +275,7 @@ export const rulesPosts = [
                     "",
                     "<a:68523animatedarrowgreen:1467450531667771665> **Carnivore Pack limits**",
                     "You may only form a group with your own species, up to the limits below;",
+                    "❕Pteranodons are not included in this rule ❕",
                     "",
                     "",
                     "🟠 **Carnivore's**",
