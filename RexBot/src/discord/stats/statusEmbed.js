@@ -57,12 +57,14 @@ function formatCountdown(ms) {
 }
 
 function formatUtcTime(date) {
-    return date.toLocaleTimeString("en-GB", {
-        hour: "2-digit",
-        minute: "2-digit",
-        timeZone: "UTC",
-        hour12: false,
-    }) + " GMT";
+    return (
+        date.toLocaleTimeString("en-GB", {
+            hour: "2-digit",
+            minute: "2-digit",
+            timeZone: "UTC",
+            hour12: false,
+        }) + " GMT"
+    );
 }
 
 function withTimeout(promise, ms, label = "Operation") {
@@ -106,24 +108,32 @@ async function lockStatusChannel(channel) {
     );
 }
 
-function buildStatusEmbed({ online, restarting, playerCount, nextRestart, nowUtc }) {
+function buildStatusEmbed({ online, restarting, playerCount, nextRestart, nowUtc, lastSeenOnline }) {
     const countdown = formatCountdown(nextRestart.getTime() - nowUtc.getTime());
     const restartTime = formatUtcTime(nextRestart);
     const updatedTime = formatUtcTime(nowUtc);
 
     let statusLine;
+    let color;
+    let serverStatusText;
 
     if (online) {
         statusLine = "🟢 **SERVER ONLINE**";
+        color = 0x2ecc71;
+        serverStatusText = "`Healthy / Responding`";
     } else if (restarting) {
         statusLine = "🟠 **SERVER RESTARTING**";
+        color = 0xf39c12;
+        serverStatusText = "`Restarting / No response yet`";
     } else {
         statusLine = "🔴 **SERVER OFFLINE**";
+        color = 0xe74c3c;
+        serverStatusText = "`Offline / No response`";
     }
 
     return new EmbedBuilder()
-        .setTitle("🦖 Blood & Bone: The Mezosoic")
-        .setColor(online ? 0x2ecc71 : 0xe74c3c)
+        .setTitle("🦖 Blood & Bone: The Mesozoic")
+        .setColor(color)
         .setThumbnail("https://media.discordapp.net/attachments/778652435227869214/1479990510142885928/logo.png?ex=69ae0c12&is=69acba92&hm=483be62858f6f38f6e94e7fecf3509578f65e3c5907c1c6be5884f90a5621e23&=&format=webp&quality=lossless&width=960&height=960")
         .setDescription(
             `${statusLine}\n` +
@@ -150,7 +160,7 @@ function buildStatusEmbed({ online, restarting, playerCount, nextRestart, nowUtc
             },
             {
                 name: "📡 Server Status",
-                value: online ? "`Healthy / Responding`" : "`Offline / No response`",
+                value: serverStatusText,
                 inline: true,
             },
             {
@@ -165,15 +175,32 @@ function buildStatusEmbed({ online, restarting, playerCount, nextRestart, nowUtc
             }
         )
         .setFooter({
-            text: "Blood & Bone • Automated Server Monitor",
+            text: online
+                ? "Blood & Bone • Automated Server Monitor"
+                : `Blood & Bone • Automated Server Monitor • Last seen online ${lastSeenOnline ? formatUtcTime(lastSeenOnline) : "Unknown"
+                }`,
         })
         .setTimestamp(nowUtc);
+}
+
+function hasMeaningfulChange(current, previous) {
+    if (!previous) return true;
+
+    return (
+        current.online !== previous.online ||
+        current.restarting !== previous.restarting ||
+        current.playerCount !== previous.playerCount ||
+        current.nextRestart !== previous.nextRestart ||
+        current.lastSeenOnline !== previous.lastSeenOnline
+    );
 }
 
 export function startStatusEmbedUpdater({ client, rcon, logger }) {
     const channelId = String(process.env.STATUS_CHANNEL_ID ?? "").trim();
     const intervalMs = Number(process.env.STATUS_UPDATE_MS ?? 30000);
     const timeoutMs = Number(process.env.RCON_QUERY_TIMEOUT_MS ?? 10000);
+    const failuresBeforeOffline = Number(process.env.STATUS_FAILURES_BEFORE_OFFLINE ?? 2);
+    const forceRefreshMs = Number(process.env.STATUS_FORCE_REFRESH_MS ?? 300000);
 
     if (!channelId) {
         logger?.warn?.("STATUS_CHANNEL_ID not set; skipping status embed updater.");
@@ -182,6 +209,29 @@ export function startStatusEmbedUpdater({ client, rcon, logger }) {
 
     let running = false;
     let locked = false;
+    let consecutiveFailures = 0;
+    let lastKnownOnline = false;
+    let lastKnownPlayerCount = null;
+    let lastSeenOnline = null;
+    let lastPublishedState = null;
+    let lastPublishAt = 0;
+
+    async function queryServer() {
+        if (!rcon.connected) {
+            await withTimeout(rcon.connect(), timeoutMs, "RCON connect");
+        }
+
+        await withTimeout(rcon.sendCommand("srv:details"), timeoutMs, "RCON srv:details");
+
+        let raw;
+        try {
+            raw = await withTimeout(rcon.sendRaw("playerlist"), timeoutMs, "RCON playerlist");
+        } catch {
+            raw = await withTimeout(rcon.sendRaw("players"), timeoutMs, "RCON players");
+        }
+
+        return parsePlayers(raw).length;
+    }
 
     async function tick() {
         if (running) return;
@@ -203,54 +253,75 @@ export function startStatusEmbedUpdater({ client, rcon, logger }) {
             let restarting = false;
             let playerCount = null;
 
-            // Ensure RCON connection is alive (handles server restarts)
-            if (!rcon.connected) {
-                try {
-                    await rcon.connect();
-                } catch { }
-            }
-
-            // First try a dedicated status check
             try {
-                await withTimeout(rcon.sendCommand("srv:details"), timeoutMs, "RCON srv:details");
+                playerCount = await queryServer();
                 online = true;
-            } catch {
-                // Force reset of the RCON connection if the server restarted
-                try {
-                    rcon.disconnect();
-                } catch { }
 
-                online = false;
-            }
+                consecutiveFailures = 0;
+                lastKnownOnline = true;
+                lastKnownPlayerCount = playerCount;
+                lastSeenOnline = new Date();
+            } catch (err) {
+                consecutiveFailures++;
 
-            // Then try player list. If this works, the server is definitely reachable.
-            try {
-                let raw;
-                try {
-                    raw = await withTimeout(rcon.sendRaw("playerlist"), timeoutMs, "RCON playerlist");
-                } catch {
-                    raw = await withTimeout(rcon.sendRaw("players"), timeoutMs, "RCON players");
+                // Keep the last known good state for a brief hiccup.
+                if (consecutiveFailures < failuresBeforeOffline) {
+                    online = lastKnownOnline;
+                    playerCount = lastKnownPlayerCount;
+                } else {
+                    online = false;
+                    playerCount = null;
+                    lastKnownOnline = false;
+                    lastKnownPlayerCount = null;
                 }
 
-                playerCount = parsePlayers(raw).length;
-                online = true;
-            } catch {
                 try {
                     rcon.disconnect();
                 } catch { }
+
+                logger?.warn?.(
+                    `Server query failed (${consecutiveFailures}/${failuresBeforeOffline}): ${err?.message ?? err}`
+                );
             }
 
             const nowUtc = new Date();
             const nextRestart = getNextRestartUtc(nowUtc);
-            const restartWindowMs = 5 * 60 * 1000; // 5 minutes
-
+            const restartWindowMs = 5 * 60 * 1000;
             const timeToRestart = nextRestart.getTime() - nowUtc.getTime();
 
             if (!online && timeToRestart < restartWindowMs && timeToRestart > -restartWindowMs) {
                 restarting = true;
             }
 
-            const embed = buildStatusEmbed({ online, restarting, playerCount, nextRestart, nowUtc });
+            logger?.info?.(
+                `[status] online=${online} restarting=${restarting} players=${playerCount ?? "unknown"} failures=${consecutiveFailures}`
+            );
+
+            const stateSnapshot = {
+                online,
+                restarting,
+                playerCount,
+                nextRestart: nextRestart.getTime(),
+                lastSeenOnline: lastSeenOnline ? lastSeenOnline.getTime() : null
+            };
+
+            const shouldForceRefresh = Date.now() - lastPublishAt >= forceRefreshMs;
+            const changed = hasMeaningfulChange(stateSnapshot, lastPublishedState);
+
+            if (!changed && !shouldForceRefresh) {
+                logger?.info?.("[status] no state change — skipping Discord update");
+                return;
+            }
+
+            const embed = buildStatusEmbed({
+                online,
+                restarting,
+                playerCount,
+                nextRestart,
+                nowUtc,
+                lastSeenOnline,
+            });
+
             const store = await loadStore();
             const messageId = store.messageId ?? null;
 
@@ -258,6 +329,13 @@ export function startStatusEmbedUpdater({ client, rcon, logger }) {
                 const msg = await channel.messages.fetch(messageId).catch(() => null);
                 if (msg && msg.author?.id === client.user.id) {
                     await msg.edit({ embeds: [embed] });
+                    lastPublishedState = stateSnapshot;
+                    lastPublishAt = Date.now();
+                    logger?.info?.(
+                        shouldForceRefresh
+                            ? "[status] embed force-refreshed successfully"
+                            : "[status] embed edited successfully"
+                    );
                     return;
                 }
             }
@@ -265,6 +343,9 @@ export function startStatusEmbedUpdater({ client, rcon, logger }) {
             const sent = await channel.send({ embeds: [embed] });
             store.messageId = sent.id;
             await saveStore(store);
+            lastPublishedState = stateSnapshot;
+            lastPublishAt = Date.now();
+            logger?.info?.("[status] embed message created successfully");
         } catch (e) {
             logger?.warn?.(`Status embed update failed: ${e?.message ?? e}`);
         } finally {
