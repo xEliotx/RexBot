@@ -293,10 +293,6 @@ export function startStatusEmbedUpdater({ client, rcon, logger }) {
                 restarting = true;
             }
 
-            logger?.info?.(
-                `[status] online=${online} restarting=${restarting} players=${playerCount ?? "unknown"} failures=${consecutiveFailures}`
-            );
-
             const stateSnapshot = {
                 online,
                 restarting,
@@ -309,9 +305,13 @@ export function startStatusEmbedUpdater({ client, rcon, logger }) {
             const changed = hasMeaningfulChange(stateSnapshot, lastPublishedState);
 
             if (!changed && !shouldForceRefresh) {
-                logger?.info?.("[status] no state change — skipping Discord update");
-                return;
+                return; // ❌ no log spam
             }
+
+            // ✅ ONLY log when actually updating
+            logger?.info?.(
+                `[status] updating → online=${online} restarting=${restarting} players=${playerCount ?? "unknown"}`
+            );
 
             const embed = buildStatusEmbed({
                 online,
@@ -331,11 +331,7 @@ export function startStatusEmbedUpdater({ client, rcon, logger }) {
                     await msg.edit({ embeds: [embed] });
                     lastPublishedState = stateSnapshot;
                     lastPublishAt = Date.now();
-                    logger?.info?.(
-                        shouldForceRefresh
-                            ? "[status] embed force-refreshed successfully"
-                            : "[status] embed edited successfully"
-                    );
+                    logger?.debug?.("[status] embed updated");
                     return;
                 }
             }

@@ -57,6 +57,11 @@ export class PlaytimeStore {
         return this.data;
     }
 
+    setChannel(channelId) {
+        this.data.embedChannelId = channelId;
+        this.save();
+    }
+
     setEmbedMessage(channelId, messageId) {
         this.data.embedChannelId = channelId;
         this.data.embedMessageId = messageId;

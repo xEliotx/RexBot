@@ -10,6 +10,7 @@ import { startPopulationUpdater } from "./discord/stats/populationUpdater.js";
 import { startDeathLogWatcher } from "./logs/deathLogWatcher.js";
 import { PlaytimeStore } from "./storage/playtimeStore.js";
 import { PlaytimeTracker } from "./rcon/playtimeTracker.js";
+import { setupplaytime } from "./discord/commands/setupplaytime.js";
 
 import { EvrimaRconClient } from "./rcon/rconClient.js";
 import { requireChannel } from "./discord/guards/channels.js";
@@ -47,6 +48,7 @@ const commandMap = new Map([
   [playerdata.data.name, playerdata],
   [postRules.data.name, postRules],
   [ticketPanel.data.name, ticketPanel],
+  [setupplaytime.data.name, setupplaytime],
 ]);
 
 client.once("clientready", () => {
@@ -78,9 +80,15 @@ client.on("interactionCreate", async (interaction) => {
     await routeInteraction(interaction, ctx);
   } catch (err) {
     logger.error("interactionCreate error:", err);
+
     if (interaction.isRepliable()) {
       const already = interaction.deferred || interaction.replied;
-      const payload = { content: "Something went wrong. Check the bot logs.", ...EPHEMERAL };
+
+      const payload = {
+        content: "Something went wrong. Check the bot logs.",
+        ...EPHEMERAL,
+      };
+
       try {
         if (already) await interaction.followUp(payload);
         else await interaction.reply(payload);
