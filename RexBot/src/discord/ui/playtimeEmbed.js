@@ -40,17 +40,19 @@ export function buildPlaytimeEmbed(storeData) {
         : "*No playtime data yet this month.*";
 
     const totalTracked = allPlayers.length;
-    const totalHours = Math.floor(
-        allPlayers.reduce((sum, p) => sum + (p.totalSeconds || 0), 0) / 3600
+    const totalSeconds = allPlayers.reduce(
+        (sum, p) => sum + (p.totalSeconds || 0),
+        0
     );
+    const totalPlaytimeText = formatDuration(totalSeconds);
 
     const lastReset = storeData.lastResetAt
         ? `<t:${Math.floor(new Date(storeData.lastResetAt).getTime() / 1000)}:D>`
         : "Not reset yet";
 
     return new EmbedBuilder()
-        .setColor(0x5865f2)
-        .setTitle("🏆 RexBot Monthly Playtime Leaderboard")
+        .setColor("#f2ff00")
+        .setTitle("🏆 Blood&Bone Monthly Playtime Leaderboard")
         .setDescription(
             [
                 "Top 10 players by tracked monthly playtime.",
@@ -65,8 +67,8 @@ export function buildPlaytimeEmbed(storeData) {
                 inline: true,
             },
             {
-                name: "🕒 Total Hours",
-                value: `**${totalHours}h**`,
+                name: "🕒 Total Playtime",
+                value: `**${totalPlaytimeText}**`,
                 inline: true,
             },
             {
@@ -76,7 +78,7 @@ export function buildPlaytimeEmbed(storeData) {
             }
         )
         .setFooter({
-            text: "Updates hourly 🟢 Tracked via Evrima RCON",
+            text: "Updates hourly 🟢 Tracked via RexBot",
         })
         .setTimestamp();
 }

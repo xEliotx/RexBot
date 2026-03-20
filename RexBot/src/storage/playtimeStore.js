@@ -31,15 +31,17 @@ export class PlaytimeStore {
             }
 
             const raw = fs.readFileSync(this.filePath, "utf8");
-            const parsed = JSON.parse(raw);
+            const parsed = raw.trim() ? JSON.parse(raw) : {};
 
             this.data = {
                 players: parsed.players || {},
-                sessions: {}, // always clear stale sessions on boot
+                sessions: {},
                 embedChannelId: parsed.embedChannelId || null,
                 embedMessageId: parsed.embedMessageId || null,
                 lastResetAt: parsed.lastResetAt || null,
             };
+
+            console.log("[PlaytimeStore] load players:", Object.keys(this.data.players));
         } catch (error) {
             console.error("[PlaytimeStore] load failed:", error);
         }
@@ -47,6 +49,9 @@ export class PlaytimeStore {
 
     save() {
         try {
+            console.log("[PlaytimeStore] save players:", Object.keys(this.data.players));
+            console.log("[PlaytimeStore] save sessions:", Object.keys(this.data.sessions));
+
             fs.writeFileSync(this.filePath, JSON.stringify(this.data, null, 2), "utf8");
         } catch (error) {
             console.error("[PlaytimeStore] save failed:", error);
@@ -69,6 +74,9 @@ export class PlaytimeStore {
     }
 
     resetLeaderboard() {
+        console.warn("[PlaytimeStore] resetLeaderboard CALLED");
+        console.trace("[PlaytimeStore] resetLeaderboard trace");
+
         this.data.players = {};
         this.data.sessions = {};
         this.data.lastResetAt = new Date().toISOString();

@@ -12,10 +12,12 @@ export class PlaytimeTracker {
         this.channelId = channelId;
 
         this.trackIntervalMs = 60_000;
-        this.embedIntervalMs = 60_000;
+        this.embedIntervalMs = 60_000; // change back to 3_600_000 later if you want
 
         this.trackTimer = null;
         this.embedTimer = null;
+
+        this.maxMissedPolls = 2;
     }
 
     async fetchPlayers() {
@@ -38,49 +40,77 @@ export class PlaytimeTracker {
         const nowIso = new Date(now).toISOString();
         const currentPlayers = new Map();
 
-        for (const player of players) {
-            currentPlayers.set(player.playerId, player);
+        // Good poll with players online
+        if (players.length) {
+            for (const player of players) {
+                currentPlayers.set(player.playerId, player);
 
-            if (!data.players[player.playerId]) {
-                data.players[player.playerId] = {
-                    playerId: player.playerId,
-                    displayName: player.name,
-                    totalSeconds: 0,
-                    firstSeen: nowIso,
-                    lastSeen: nowIso,
-                };
-            }
-
-            const saved = data.players[player.playerId];
-            saved.displayName = player.name;
-            saved.lastSeen = nowIso;
-
-            const session = data.sessions[player.playerId];
-
-            if (!session) {
-                data.sessions[player.playerId] = {
-                    playerId: player.playerId,
-                    displayName: player.name,
-                    joinedAt: nowIso,
-                    lastSeen: nowIso,
-                };
-            } else {
-                const diffSeconds = Math.max(
-                    0,
-                    Math.floor((now - new Date(session.lastSeen).getTime()) / 1000)
-                );
-
-                if (diffSeconds > 0) {
-                    saved.totalSeconds += diffSeconds;
+                if (!data.players[player.playerId]) {
+                    data.players[player.playerId] = {
+                        playerId: player.playerId,
+                        displayName: player.name,
+                        totalSeconds: 0,
+                        firstSeen: nowIso,
+                        lastSeen: nowIso,
+                    };
                 }
 
-                session.displayName = player.name;
-                session.lastSeen = nowIso;
+                const saved = data.players[player.playerId];
+                saved.displayName = player.name;
+                saved.lastSeen = nowIso;
+
+                const session = data.sessions[player.playerId];
+
+                if (!session) {
+                    data.sessions[player.playerId] = {
+                        playerId: player.playerId,
+                        displayName: player.name,
+                        joinedAt: nowIso,
+                        lastSeen: nowIso,
+                        missedPolls: 0,
+                    };
+                } else {
+                    const diffSeconds = Math.max(
+                        0,
+                        Math.floor((now - new Date(session.lastSeen).getTime()) / 1000)
+                    );
+
+                    if (diffSeconds > 0) {
+                        saved.totalSeconds += diffSeconds;
+                    }
+
+                    session.displayName = player.name;
+                    session.lastSeen = nowIso;
+                    session.missedPolls = 0;
+                }
             }
+
+            // Players not seen on this good poll: mark toward disconnect
+            for (const playerId of Object.keys(data.sessions)) {
+                if (!currentPlayers.has(playerId)) {
+                    const session = data.sessions[playerId];
+                    session.missedPolls = (session.missedPolls || 0) + 1;
+
+                    if (session.missedPolls >= this.maxMissedPolls) {
+                        delete data.sessions[playerId];
+                    }
+                }
+            }
+            console.log("[playtime] saving players:", Object.keys(data.players));
+            console.log("[playtime] saving sessions:", Object.keys(data.sessions));
+            this.store.save();
+            return;
         }
 
+        // Empty poll: server may be empty OR RCON may be flaky.
+        // Never touch leaderboard totals. Only age out live sessions slowly.
+        console.warn("[playtime] empty playerlist returned");
+
         for (const playerId of Object.keys(data.sessions)) {
-            if (!currentPlayers.has(playerId)) {
+            const session = data.sessions[playerId];
+            session.missedPolls = (session.missedPolls || 0) + 1;
+
+            if (session.missedPolls >= this.maxMissedPolls) {
                 delete data.sessions[playerId];
             }
         }
@@ -117,6 +147,9 @@ export class PlaytimeTracker {
 
     async updateEmbed() {
         const data = this.store.getData();
+
+        console.log("[playtime] updateEmbed tracked players:", Object.keys(data.players));
+
         const message = await this.ensureEmbedMessage();
 
         await message.edit({
@@ -145,6 +178,8 @@ export class PlaytimeTracker {
     }
 
     async resetLeaderboard() {
+        console.warn("[playtime] resetLeaderboard CALLED");
+        console.trace("[playtime] resetLeaderboard trace");
         this.store.resetLeaderboard();
         await this.updateEmbed();
     }

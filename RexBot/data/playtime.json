@@ -1,5 +1,13 @@
 {
-  "players": {},
+  "players": {
+    "76561198415040588": {
+      "playerId": "76561198415040588",
+      "displayName": "Eliot™",
+      "totalSeconds": 357,
+      "firstSeen": "2026-03-20T10:48:59.819Z",
+      "lastSeen": "2026-03-20T11:05:40.069Z"
+    }
+  },
   "sessions": {},
   "embedChannelId": "1484358983279050752",
   "embedMessageId": "1484498532412035253",

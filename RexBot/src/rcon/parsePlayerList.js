@@ -1,20 +1,31 @@
 export function parsePlayerList(rawText) {
     if (!rawText || typeof rawText !== "string") return [];
 
-    return rawText
-        .split("\n")
+    const lines = rawText
+        .split(/\r?\n/)
         .map((line) => line.trim())
-        .filter((line) => line.includes("Name:") && line.includes("PlayerID:"))
-        .map((line) => {
-            const nameMatch = line.match(/Name:\s*(.*?),\s*PlayerID:/);
-            const idMatch = line.match(/PlayerID:\s*(\d+)/);
-
-            if (!nameMatch || !idMatch) return null;
-
-            return {
-                name: nameMatch[1].trim(),
-                playerId: idMatch[1].trim(),
-            };
-        })
         .filter(Boolean);
+
+    if (!lines.length) return [];
+
+    // Remove header line if present
+    if (lines[0].toLowerCase() === "playerlist") {
+        lines.shift();
+    }
+
+    const players = [];
+
+    for (let i = 0; i < lines.length; i += 2) {
+        const playerId = String(lines[i] || "").replace(/,+$/, "").trim();
+        const name = String(lines[i + 1] || "").replace(/,+$/, "").trim();
+
+        if (!playerId || !name) continue;
+
+        players.push({
+            playerId,
+            name,
+        });
+    }
+
+    return players;
 }
