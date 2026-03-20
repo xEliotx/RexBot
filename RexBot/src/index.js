@@ -8,6 +8,8 @@ import { postRules } from "./discord/rules/postRulesCommand.js";
 import { handleNewPlayerGuideBookButtons } from "./discord/rules/NewPlayerGuideBook.js";
 import { startPopulationUpdater } from "./discord/stats/populationUpdater.js";
 import { startDeathLogWatcher } from "./logs/deathLogWatcher.js";
+import { PlaytimeStore } from "./storage/playtimeStore.js";
+import { PlaytimeTracker } from "./rcon/playtimeTracker.js";
 
 import { EvrimaRconClient } from "./rcon/rconClient.js";
 import { requireChannel } from "./discord/guards/channels.js";
@@ -28,6 +30,15 @@ const rcon = new EvrimaRconClient({
   logger,
 });
 
+const playtimeStore = new PlaytimeStore();
+
+const playtimeTracker = new PlaytimeTracker({
+  client,
+  rcon,
+  store: playtimeStore,
+  channelId: process.env.PLAYTIME_CHANNEL_ID,
+});
+
 const session = new Map();
 
 const commandMap = new Map([
@@ -46,11 +57,12 @@ client.once("clientready", () => {
   startDeathLogWatcher({
     client, logFilePath: "C:/Users/Administrator/Desktop/TheIsleServer/TheIsle/Saved/Logs/TheIsle.log", channelId: "1480218203857752265", logger,
   });
+  playtimeTracker.start();
 });
 
 client.on("interactionCreate", async (interaction) => {
   try {
-    const ctx = { config, client, rcon, session };
+    const ctx = { config, client, rcon, session, playtimeTracker };
 
     if (interaction.isChatInputCommand()) {
       const cmd = commandMap.get(interaction.commandName);
