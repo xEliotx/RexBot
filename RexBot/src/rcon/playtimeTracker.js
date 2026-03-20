@@ -12,7 +12,7 @@ export class PlaytimeTracker {
         this.channelId = channelId;
 
         this.trackIntervalMs = 60_000;
-        this.embedIntervalMs = 3_600_000;
+        this.embedIntervalMs = 60_000;
 
         this.trackTimer = null;
         this.embedTimer = null;

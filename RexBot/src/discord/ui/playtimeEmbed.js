@@ -76,7 +76,7 @@ export function buildPlaytimeEmbed(storeData) {
             }
         )
         .setFooter({
-            text: "Updates hourly • Tracked via Evrima RCON",
+            text: "Updates hourly 🟢 Tracked via Evrima RCON",
         })
         .setTimestamp();
 }
