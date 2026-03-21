@@ -11,6 +11,7 @@ import { startDeathLogWatcher } from "./logs/deathLogWatcher.js";
 import { PlaytimeStore } from "./storage/playtimeStore.js";
 import { PlaytimeTracker } from "./rcon/playtimeTracker.js";
 import { setupplaytime } from "./discord/commands/setupplaytime.js";
+import { startPresenceRotator } from "./discord/stats/rotatePresence.js";
 
 import { EvrimaRconClient } from "./rcon/rconClient.js";
 import { requireChannel } from "./discord/guards/channels.js";
@@ -53,6 +54,7 @@ const commandMap = new Map([
 
 client.once("clientready", () => {
   logger.info(`Logged in as ${client.user.tag}`);
+  startPresenceRotator({ client, rcon, logger });
   startStatusEmbedUpdater({ client, rcon, logger });
   startTicketInactivityWatcher({ client, config, logger });
   startPopulationUpdater({ client, rcon, channelId: "1479972419157491832" });
