@@ -155,7 +155,7 @@ function buildStatusEmbed({ online, restarting, playerCount, nextRestart, nowUtc
     return new EmbedBuilder()
         .setTitle("🦖 Blood & Bone: The Mesozoic")
         .setColor(color)
-        .setImage("https://cdn.discordapp.com/attachments/778652435227869214/1485681531023261789/Server_Status.png?ex=69c2c03f&is=69c16ebf&hm=30a34f1670d24f212e4be9f554ed90c5cec76d95d6a9199b7917ebc5102978b9&")
+        .setImage("https://cdn.discordapp.com/attachments/778652435227869214/1485683137769111673/Server_Stats.png?ex=69c2c1be&is=69c1703e&hm=a2bea10770813c1f27fe555508990628caa6d2330f968b298ab7f08a3e6e89c1&")
         .setDescription(
             `${statusLine}\n` +
             `━━━━━━━━━━━━━━━━━━\n` +
