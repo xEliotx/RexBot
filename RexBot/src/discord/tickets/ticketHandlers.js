@@ -171,6 +171,8 @@ export async function handleTicketButton(interaction, ctx) {
                         "• What you need help with",
                         "• Clear description of the issue",
                         "• Any relevant screenshots / clips",
+                        "",
+                        "• **NOTE: Tickets will automatically close after 24 hours of inactivity**",
                     ].filter(Boolean).join("\n")
                 )
                 .setTimestamp();

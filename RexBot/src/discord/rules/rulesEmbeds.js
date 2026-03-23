@@ -19,6 +19,7 @@ export const rulesPosts = [
             .setColor(COLORS.herbivore)
             .setTitle("🌿 Herbivore Rules")
         	.setThumbnail("https://media.discordapp.net/attachments/778652435227869214/1469882190878740695/Pachycephalosaurus-ec20045c.png?ex=698945f7&is=6987f477&hm=e321e9a0d05091bcfa42e1a24daea414d41dd28a50d287d0e58db76bdc73674c&=&format=webp&quality=lossless")
+            .setImage("https://cdn.discordapp.com/attachments/778652435227869214/1485688543958270002/HerbivoreRules.png?ex=69c2c6c7&is=69c17547&hm=bcf134445fb23f4672100fb207326ba08a414c109d333ecc0336ad1670b814b0&")
             .setDescription(
                 [
                     "⚖️ **Core Philosophy**",
@@ -101,6 +102,7 @@ export const rulesPosts = [
             .setColor(COLORS.carnivore)
             .setTitle("🥩 Carnivore Rules")
         	.setThumbnail("https://media.discordapp.net/attachments/778652435227869214/1469882209791115324/Pteranodon-75fd074e.png?ex=698945fb&is=6987f47b&hm=8eaf5ad83f8a224c33fb10fb803cad59eb785b8f86edceae15a6540ec2bfd3a2&=&format=webp&quality=lossless")
+            .setImage("https://cdn.discordapp.com/attachments/778652435227869214/1485687300561174598/CarnivoreRules.png?ex=69c2c59f&is=69c1741f&hm=534d5b58de26a806891fcc8adbd88b2cb1dd4a7643500234aeaa691308dbc919&")
             .setDescription(
                 [
                     "⚖️ **Core Philosophy**",
@@ -150,6 +152,7 @@ export const rulesPosts = [
             .setColor(COLORS.general) // neutral / official
             .setTitle("📜 General Server Rules")
         	.setThumbnail("https://media.discordapp.net/attachments/778652435227869214/1469881920799375452/Beipiaosaurus-62e0cfb3.png?ex=698945b7&is=6987f437&hm=415cccb6650d75c31adbaddf743dc4e6f2f2ecb2dd66902bce0e4ae6709be2d9&=&format=webp&quality=lossless")
+            .setImage("https://cdn.discordapp.com/attachments/778652435227869214/1485701019202621471/GeneralRules.png?ex=69c2d265&is=69c180e5&hm=2d204ac693a10f512faa1ca358f6d5aa8f800287ad7a234d8329f170a0a30a8d&")
             .setDescription(
                 [
                     "<a:68523animatedarrowgreen:1467450531667771665> **Welcome to the server!**",
@@ -226,6 +229,7 @@ export const rulesPosts = [
             .setColor(COLORS.pack)
             .setTitle("☯️ Pack Limit Server Rules")
         	.setThumbnail("https://media.discordapp.net/attachments/778652435227869214/1469881707279810641/Troodon-5fd83e64.png?ex=69894584&is=6987f404&hm=73c79963c842f7b1c6ee76f385502c762ba33add8320136413d17deb7201d801&=&format=webp&quality=lossless")
+            .setImage("https://cdn.discordapp.com/attachments/778652435227869214/1485690305004044298/PackLimits.png?ex=69c2c86b&is=69c176eb&hm=1f1c41f599a2d6386ae54b879ef22ec284b427b4170eba0e2186e73b6913ae95&")
             .setDescription(
                 [
                     "<a:68523animatedarrowgreen:1467450531667771665> **Herbivore Herding Rules**",
