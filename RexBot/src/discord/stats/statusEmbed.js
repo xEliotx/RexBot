@@ -5,6 +5,23 @@ import { EmbedBuilder } from "discord.js";
 
 const STORE_PATH = path.resolve(process.cwd(), "data", "statusMessage.json");
 
+const SERVER_INFO = {
+    map: "Gateway",
+    location: "Europe",
+    type: "Unofficial",
+    growthSpeed: "1.25x",
+    maxPlayers: 200,
+};
+
+function makeBar(current, max, size = 10) {
+    if (!max || max <= 0) return "░".repeat(size);
+
+    const ratio = Math.max(0, Math.min(1, current / max));
+    const filled = Math.round(ratio * size);
+
+    return "█".repeat(filled) + "░".repeat(size - filled);
+}
+
 function parsePlayers(raw) {
     const text = String(raw ?? "").trim();
     if (!text) return [];
@@ -115,26 +132,30 @@ function buildStatusEmbed({ online, restarting, playerCount, nextRestart, nowUtc
 
     let statusLine;
     let color;
-    let serverStatusText;
 
     if (online) {
         statusLine = "🟢 **SERVER ONLINE**";
         color = 0x2ecc71;
-        serverStatusText = "`Healthy / Responding`";
     } else if (restarting) {
         statusLine = "🟠 **SERVER RESTARTING**";
         color = 0xf39c12;
-        serverStatusText = "`Restarting / No response yet`";
     } else {
         statusLine = "🔴 **SERVER OFFLINE**";
         color = 0xe74c3c;
-        serverStatusText = "`Offline / No response`";
     }
+
+    const safePlayerCount = online && playerCount != null ? playerCount : 0;
+    const capacityPercent =
+        SERVER_INFO.maxPlayers > 0
+            ? Math.round((safePlayerCount / SERVER_INFO.maxPlayers) * 100)
+            : 0;
+
+    const capacityBar = makeBar(safePlayerCount, SERVER_INFO.maxPlayers, 10);
 
     return new EmbedBuilder()
         .setTitle("🦖 Blood & Bone: The Mesozoic")
         .setColor(color)
-        .setThumbnail("https://media.discordapp.net/attachments/778652435227869214/1479990510142885928/logo.png?ex=69ae0c12&is=69acba92&hm=483be62858f6f38f6e94e7fecf3509578f65e3c5907c1c6be5884f90a5621e23&=&format=webp&quality=lossless&width=960&height=960")
+        .setImage("https://cdn.discordapp.com/attachments/778652435227869214/1485681531023261789/Server_Status.png?ex=69c2c03f&is=69c16ebf&hm=30a34f1670d24f212e4be9f554ed90c5cec76d95d6a9199b7917ebc5102978b9&")
         .setDescription(
             `${statusLine}\n` +
             `━━━━━━━━━━━━━━━━━━\n` +
@@ -144,10 +165,23 @@ function buildStatusEmbed({ online, restarting, playerCount, nextRestart, nowUtc
         )
         .addFields(
             {
-                name: "👥 Players Online",
-                value: online ? (playerCount == null ? "`Unknown`" : `**${playerCount}**`) : "`Unknown`",
+                name: "👥 Players",
+                value: online
+                    ? `**${playerCount == null ? "Unknown" : playerCount} / ${SERVER_INFO.maxPlayers}**`
+                    : `**Unknown / ${SERVER_INFO.maxPlayers}**`,
                 inline: true,
             },
+            {
+                name: "📊 Capacity",
+                value: `\`${capacityBar}\`\n**${capacityPercent}%**`,
+                inline: true,
+            },
+            {
+                name: "\u200B",
+                value: "\u200B",
+                inline: true,
+            },
+
             {
                 name: "⏰ Next Restart",
                 value: `**${restartTime}**`,
@@ -159,27 +193,43 @@ function buildStatusEmbed({ online, restarting, playerCount, nextRestart, nowUtc
                 inline: true,
             },
             {
-                name: "📡 Server Status",
-                value: serverStatusText,
+                name: "\u200B",
+                value: "\u200B",
+                inline: true,
+            },
+
+            {
+                name: "🗺️ Map",
+                value: `**${SERVER_INFO.map}**`,
                 inline: true,
             },
             {
-                name: "🕒 Last Updated",
-                value: updatedTime,
+                name: "🌱 Growth Speed",
+                value: `**${SERVER_INFO.growthSpeed}**`,
+                inline: true,
+            },
+            {
+                name: "\u200B",
+                value: "\u200B",
+                inline: true,
+            },
+
+            {
+                name: "🌍 Location",
+                value: `**${SERVER_INFO.location}**`,
                 inline: true,
             },
             {
                 name: "🌍 Time Zone",
-                value: "`GMT / UTC`",
+                value: "`GMT`",
+                inline: true,
+            },
+            {
+                name: "\u200B",
+                value: "\u200B",
                 inline: true,
             }
         )
-        .setFooter({
-            text: online
-                ? "Blood & Bone • Automated Server Monitor"
-                : `Blood & Bone • Automated Server Monitor • Last seen online ${lastSeenOnline ? formatUtcTime(lastSeenOnline) : "Unknown"
-                }`,
-        })
         .setTimestamp(nowUtc);
 }
 
