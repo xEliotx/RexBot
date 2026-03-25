@@ -52,7 +52,8 @@ export function buildPlaytimeEmbed(storeData) {
 
     return new EmbedBuilder()
         .setColor("#f2ff00")
-        .setTitle("🏆 Blood&Bone Monthly Playtime Leaderboard")
+        .setTitle("🏆 Blood & Bone Monthly Playtime Leaderboard")
+        .setThumbnail("https://media.discordapp.net/attachments/778652435227869214/1479990510142885928/logo.png?ex=69ae0c12&is=69acba92&hm=483be62858f6f38f6e94e7fecf3509578f65e3c5907c1c6be5884f90a5621e23&=&format=webp&quality=lossless&width=960&height=960")
         .setDescription(
             [
                 "Top 10 players by tracked monthly playtime.",
@@ -78,7 +79,7 @@ export function buildPlaytimeEmbed(storeData) {
             }
         )
         .setFooter({
-            text: "Updates hourly 🟢 Tracked via RexBot",
+            text: "Updates every 10 minutes 🟢 Tracked via RexBot",
         })
         .setTimestamp();
 }

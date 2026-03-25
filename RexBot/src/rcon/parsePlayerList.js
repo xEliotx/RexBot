@@ -6,24 +6,28 @@ export function parsePlayerList(rawText) {
         .map((line) => line.trim())
         .filter(Boolean);
 
-    if (!lines.length) return [];
+    if (lines.length < 3) return [];
 
-    // Remove header line if present
-    if (lines[0].toLowerCase() === "playerlist") {
-        lines.shift();
-    }
+    const header = lines[0].toLowerCase();
+    if (header !== "playerlist") return [];
 
+    const ids = lines[1]
+        .split(",")
+        .map((value) => value.trim())
+        .filter(Boolean);
+
+    const names = lines[2]
+        .split(",")
+        .map((value) => value.trim())
+        .filter(Boolean);
+
+    const count = Math.min(ids.length, names.length);
     const players = [];
 
-    for (let i = 0; i < lines.length; i += 2) {
-        const playerId = String(lines[i] || "").replace(/,+$/, "").trim();
-        const name = String(lines[i + 1] || "").replace(/,+$/, "").trim();
-
-        if (!playerId || !name) continue;
-
+    for (let i = 0; i < count; i += 1) {
         players.push({
-            playerId,
-            name,
+            playerId: ids[i],
+            name: names[i],
         });
     }
 

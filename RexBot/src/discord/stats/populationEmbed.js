@@ -38,13 +38,38 @@ function getTopSpeciesByCategory(speciesCounts, category) {
     return topSpecies ? { species: topSpecies, count: topCount } : null;
 }
 
-function getImbalanceText(carnivores, herbivores) {
-    if (carnivores >= herbivores + 5 && herbivores > 0) {
+function getImbalanceText(carnivores, herbivores, omnivores) {
+    const total = carnivores + herbivores + omnivores;
+
+    if (total === 0) {
+        return "⚫ No active ecosystem";
+    }
+
+    if (carnivores > 0 && herbivores === 0 && omnivores === 0) {
+        return "⚠️ Herbivore extinction risk";
+    }
+
+    if (herbivores > 0 && carnivores === 0 && omnivores === 0) {
+        return "⚠️ Predator extinction risk";
+    }
+
+    if (carnivores > 0 && herbivores === 0) {
+        return "🩸 Carnivore-dominated ecosystem";
+    }
+
+    if (herbivores > 0 && carnivores === 0) {
+        return "🌿 Herbivore-dominated ecosystem";
+    }
+
+    const carnivorePressure = carnivores / Math.max(1, herbivores + omnivores);
+    const herbivorePressure = herbivores / Math.max(1, carnivores + omnivores);
+
+    if (carnivorePressure >= 2) {
         return "⚠️ Carnivore imbalance detected";
     }
 
-    if (herbivores >= carnivores + 5 && carnivores > 0) {
-        return "⚠️ Herbivore imbalance detected";
+    if (herbivorePressure >= 2) {
+        return "🌿 Herbivore imbalance detected";
     }
 
     return "✅ Ecosystem balance stable";
@@ -78,7 +103,7 @@ export function buildPopulationEmbed(speciesCounts) {
         ? `${speciesEmojis[dominantHerbivore.species] || "🦕"} **${dominantHerbivore.species}**`
         : "None";
 
-    const imbalanceText = getImbalanceText(carnivores, herbivores);
+    const imbalanceText = getImbalanceText(carnivores, herbivores, omnivores);
 
     embed.addFields({
         name: "🧬 Ecosystem Overview",

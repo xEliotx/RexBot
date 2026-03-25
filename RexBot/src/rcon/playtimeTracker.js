@@ -12,7 +12,7 @@ export class PlaytimeTracker {
         this.channelId = channelId;
 
         this.trackIntervalMs = 60_000;
-        this.embedIntervalMs = 60_000; // change back to 3_600_000 later if you want
+        this.embedIntervalMs = 600_000; // change back to 3_600_000 later if you want
 
         this.trackTimer = null;
         this.embedTimer = null;
@@ -40,7 +40,6 @@ export class PlaytimeTracker {
         const nowIso = new Date(now).toISOString();
         const currentPlayers = new Map();
 
-        // Good poll with players online
         if (players.length) {
             for (const player of players) {
                 currentPlayers.set(player.playerId, player);
@@ -84,34 +83,16 @@ export class PlaytimeTracker {
                     session.missedPolls = 0;
                 }
             }
-
-            // Players not seen on this good poll: mark toward disconnect
-            for (const playerId of Object.keys(data.sessions)) {
-                if (!currentPlayers.has(playerId)) {
-                    const session = data.sessions[playerId];
-                    session.missedPolls = (session.missedPolls || 0) + 1;
-
-                    if (session.missedPolls >= this.maxMissedPolls) {
-                        delete data.sessions[playerId];
-                    }
-                }
-            }
-            console.log("[playtime] saving players:", Object.keys(data.players));
-            console.log("[playtime] saving sessions:", Object.keys(data.sessions));
-            this.store.save();
-            return;
         }
 
-        // Empty poll: server may be empty OR RCON may be flaky.
-        // Never touch leaderboard totals. Only age out live sessions slowly.
-        console.warn("[playtime] empty playerlist returned");
-
         for (const playerId of Object.keys(data.sessions)) {
-            const session = data.sessions[playerId];
-            session.missedPolls = (session.missedPolls || 0) + 1;
+            if (!currentPlayers.has(playerId)) {
+                const session = data.sessions[playerId];
+                session.missedPolls = (session.missedPolls || 0) + 1;
 
-            if (session.missedPolls >= this.maxMissedPolls) {
-                delete data.sessions[playerId];
+                if (session.missedPolls >= this.maxMissedPolls) {
+                    delete data.sessions[playerId];
+                }
             }
         }
 
@@ -147,11 +128,7 @@ export class PlaytimeTracker {
 
     async updateEmbed() {
         const data = this.store.getData();
-
-        console.log("[playtime] updateEmbed tracked players:", Object.keys(data.players));
-
         const message = await this.ensureEmbedMessage();
-
         await message.edit({
             embeds: [buildPlaytimeEmbed(data)],
             components: buildPlaytimeComponents(),
@@ -164,22 +141,16 @@ export class PlaytimeTracker {
 
         this.trackTimer = setInterval(() => {
             this.trackTick().catch((err) => {
-                console.error("[PlaytimeTracker] trackTick error:", err);
             });
         }, this.trackIntervalMs);
 
         this.embedTimer = setInterval(() => {
             this.updateEmbed().catch((err) => {
-                console.error("[PlaytimeTracker] updateEmbed error:", err);
             });
         }, this.embedIntervalMs);
-
-        console.log("[PlaytimeTracker] started");
     }
 
     async resetLeaderboard() {
-        console.warn("[playtime] resetLeaderboard CALLED");
-        console.trace("[playtime] resetLeaderboard trace");
         this.store.resetLeaderboard();
         await this.updateEmbed();
     }

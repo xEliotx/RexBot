@@ -22,16 +22,20 @@ export const ticketPanel = {
     async execute(interaction) {
         const embed = new EmbedBuilder()
             .setColor(0xff0033)
+            .setAuthor({
+                name: channel.guild?.name ?? "Ticket System",
+                iconURL: channel.guild?.iconURL?.() ?? undefined,
+            })
             .setTitle("🎫 Support Tickets")
             .setDescription(
                 [
                     "**Need help?** Open a ticket and staff will respond.",
                     "",
                     "📌 Please include:",
-                    "• What happened",
-                    "• When it happened",
-                    "• Screenshots/clips if possible",
-                    "• General details to help us assist you faster",
+                    ">• What happened",
+                    ">• When it happened",
+                    ">• Screenshots/clips if possible",
+                    ">• General details to help us assist you faster",
                 ].join("\n")
             );
 
