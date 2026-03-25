@@ -4,6 +4,8 @@ import {
     ButtonBuilder,
     ButtonStyle,
 } from "discord.js";
+import { sendTicketTranscript } from "./ticketTranscript.js";
+import { notifyTicketOwnerClosed } from "./ticketNotifications.js";
 
 function parseTopic(topic = "") {
     const ownerId = topic.match(/ticket_owner=(\d+)/)?.[1] ?? null;
@@ -74,6 +76,26 @@ export function startTicketInactivityWatcher({ client, config, logger }) {
                 // close
                 if (idleMs >= inactivityMs) {
                     await ch.send("🧹 Auto-closing ticket due to inactivity.").catch(() => { });
+
+                    const details = {
+                        closureMode: "Automatic",
+                        reason: "Ticket auto-closed due to inactivity",
+                        closedBy: "System",
+                        claimedBy: "Not claimed",
+                    };
+
+                    try {
+                        await sendTicketTranscript(ch, { config, logger }, details);
+                    } catch (err) {
+                        logger?.warn?.("Failed to save auto-close transcript:", err);
+                    }
+
+                    try {
+                        await notifyTicketOwnerClosed(ch, details, { config, logger });
+                    } catch (err) {
+                        logger?.warn?.("Failed to DM ticket owner after auto-close:", err);
+                    }
+
                     await ch.delete("Ticket auto-closed due to inactivity").catch(() => { });
                 }
             }

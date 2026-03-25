@@ -8,9 +8,10 @@ import {
     MessageFlags
 } from "discord.js";
 import { EPHEMERAL } from "../util/ephemeral.js";
-
 import { mkdir, readFile, writeFile } from "fs/promises";
 import path from "path";
+import { sendTicketTranscript } from "./ticketTranscript.js";
+import { notifyTicketOwnerClosed } from "./ticketNotifications.js";
 
 const DATA_DIR = path.resolve(process.cwd(), "data");
 const COUNTS_FILE = path.join(DATA_DIR, "ticketCounts.json");
@@ -242,7 +243,6 @@ export async function handleTicketButton(interaction, ctx) {
         const channel = interaction.channel;
         if (!channel) return;
 
-        // Basic safety: only allow closing inside a ticket channel
         const ownerId = channel.topic?.match(/ticket_owner=(\d+)/)?.[1];
         const staffRoleId = ctx.config.channels.ticketStaffRoleId || ctx.config.roles.adminRoleId;
 
@@ -254,9 +254,28 @@ export async function handleTicketButton(interaction, ctx) {
             return;
         }
 
-        await interaction.editReply({ content: "🧹 Closing ticket in 3 seconds…" });
+        await interaction.editReply({ content: "🧹 Saving transcript and closing ticket in 3 seconds…" });
 
         setTimeout(async () => {
+            const details = {
+                closureMode: "Manual",
+                reason: "Resolved",
+                closedBy: `<@${interaction.user.id}>`,
+                claimedBy: "Not claimed",
+            };
+
+            try {
+                await sendTicketTranscript(channel, ctx, details);
+            } catch (err) {
+                ctx.logger?.warn?.("Failed to save ticket transcript:", err);
+            }
+
+            try {
+                await notifyTicketOwnerClosed(channel, details, ctx);
+            } catch (err) {
+                ctx.logger?.warn?.("Failed to DM ticket owner:", err);
+            }
+
             try {
                 await channel.delete("Ticket closed");
             } catch { }

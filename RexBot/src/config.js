@@ -32,6 +32,8 @@ export const config = {
     ticketInactivityHours: Number(process.env.TICKET_INACTIVITY_HOURS ?? 48),
     ticketInactivityCheckMinutes: Number(process.env.TICKET_INACTIVITY_CHECK_MINUTES ?? 10),
     ticketWarnBeforeHours: Number(process.env.TICKET_WARN_BEFORE_HOURS ?? 1),
+    ticketLogsChannelId: optional("TICKET_LOGS_CHANNEL_ID", ""),
+    ticketCloseDmEnabled: optional("TICKET_CLOSE_DM_ENABLED", "false").toLowerCase() === "true",
   },
   rcon: {
     host: must("RCON_HOST"),
