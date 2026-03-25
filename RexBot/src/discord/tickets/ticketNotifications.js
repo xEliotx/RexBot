@@ -14,21 +14,25 @@ export async function notifyTicketOwnerClosed(channel, details = {}, ctx = {}) {
     const files = await buildTicketTranscriptFiles(channel);
 
     const embed = new EmbedBuilder()
-        .setColor(0x2b2d31)
-        .setTitle("Your ticket was closed")
+        .setColor(0x5865f2)
+        .setTitle("📁 Your Ticket Transcript")
+        .setDescription("Your ticket has been closed. Your transcript file is attached.")
         .addFields(
-            { name: "Ticket ID", value: ticketNum ?? "Unknown", inline: true },
+            { name: "Ticket ID", value: `#${ticketNum ?? "Unknown"}`, inline: true },
             { name: "Type", value: ticketType ?? "Unknown", inline: true },
             { name: "Closed By", value: details.closedBy ?? "System", inline: true },
             { name: "Claimed By", value: details.claimedBy ?? "Not claimed", inline: true },
+            { name: "Closure Mode", value: details.closureMode ?? "Unknown", inline: true },
             { name: "Reason", value: details.reason ?? "Resolved", inline: false },
         )
-        .setDescription("Your ticket transcript is attached below.")
+        .setFooter({
+            text: channel.guild?.name ?? "Ticket System",
+        })
         .setTimestamp();
 
     await user.send({
         embeds: [embed],
-        files: [files.txt, files.html],
+        files: [files.txt],
     });
 
     return true;
