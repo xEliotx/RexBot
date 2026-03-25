@@ -23,19 +23,20 @@ export const ticketPanel = {
         const embed = new EmbedBuilder()
             .setColor(0xff0033)
             .setAuthor({
-                name: channel.guild?.name ?? "Ticket System",
-                iconURL: channel.guild?.iconURL?.() ?? undefined,
+                name: interaction.guild?.name ?? "Ticket System",
+                iconURL: interaction.guild?.iconURL?.() ?? undefined,
             })
             .setTitle("🎫 Support Tickets")
+            .setImage("https://cdn.discordapp.com/attachments/778652435227869214/1486468541002809565/Tickets.png?ex=69c59d35&is=69c44bb5&hm=742a1e032f0f9ba772a09086ef39c62c0d3a347cb447d7bc443cd7ebdc7ee909&")
             .setDescription(
                 [
                     "**Need help?** Open a ticket and staff will respond.",
                     "",
                     "📌 Please include:",
-                    ">• What happened",
-                    ">• When it happened",
-                    ">• Screenshots/clips if possible",
-                    ">• General details to help us assist you faster",
+                    "> • What happened.",
+                    "> • When it happened.",
+                    "> • Screenshots/clips if possible.",
+                    "> • General details to help us assist you faster.",
                 ].join("\n")
             );
 
