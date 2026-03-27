@@ -22,7 +22,7 @@ import { handleMemberJoin } from "./discord/welcome/welcomeHandlers.js";
 import { ticketPanel } from "./discord/tickets/ticketPanelCommand.js";
 import { startTicketInactivityWatcher } from "./discord/tickets/ticketInactivity.js";
 import { playerdata } from "./discord/commands/playerdata.js";
-import { dinoRolePanelCommand } from "./discord/roles/dinoRolePanelCommand.js";
+import  dinoRolePanelCommand  from "./discord/roles/dinoRolePanelCommand.js";
 
 const client = createClient();
 

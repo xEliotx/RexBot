@@ -7,7 +7,7 @@ import { postRules } from "./rules/postRulesCommand.js";
 import { ticketPanel } from "./tickets/ticketPanelCommand.js";
 import { rconplayers } from "./commands/rconplayers.js";
 import { playerdata } from "./commands/playerdata.js";
-import { dinoRolePanelCommand } from "./discord/roles/dinoRolePanelCommand.js";
+import dinoRolePanelCommand from "./roles/dinoRolePanelCommand.js";
 
 const commands = [
   setup.data.toJSON(),
