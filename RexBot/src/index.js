@@ -22,6 +22,7 @@ import { handleMemberJoin } from "./discord/welcome/welcomeHandlers.js";
 import { ticketPanel } from "./discord/tickets/ticketPanelCommand.js";
 import { startTicketInactivityWatcher } from "./discord/tickets/ticketInactivity.js";
 import { playerdata } from "./discord/commands/playerdata.js";
+import  dinoRolePanelCommand  from "./discord/roles/dinoRolePanelCommand.js";
 
 const client = createClient();
 
@@ -50,6 +51,7 @@ const commandMap = new Map([
   [postRules.data.name, postRules],
   [ticketPanel.data.name, ticketPanel],
   [setupplaytime.data.name, setupplaytime],
+  [dinoRolePanelCommand.data.name, dinoRolePanelCommand],
 ]);
 
 client.once("clientready", () => {
@@ -66,7 +68,7 @@ client.once("clientready", () => {
 
 client.on("interactionCreate", async (interaction) => {
   try {
-    const ctx = { config, client, rcon, session, playtimeTracker };
+    const ctx = { config, client, rcon, session, playtimeTracker, logger };
 
     if (interaction.isChatInputCommand()) {
       const cmd = commandMap.get(interaction.commandName);
