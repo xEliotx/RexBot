@@ -97,7 +97,7 @@ function buildDeathEmbed(event) {
     return new EmbedBuilder()
         .setColor(0x5865f2)
         .setDescription(
-            `${emoji}**${event.player.species}** \`${event.player.growth}%\`${gap}☠️${gap}${event.cause}`
+            `${emoji}${gap}**${event.player.species}** \`${event.player.growth}%\`${gap}☠️${gap}${event.cause}`
         );
 }
 
