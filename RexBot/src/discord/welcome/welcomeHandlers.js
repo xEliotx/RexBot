@@ -105,13 +105,13 @@ export async function handleMemberJoin(member, { config, logger }) {
             `🎁 **Reward-Center** → <#1479834219067998238>\n\n` +
 			
             `<a:3712rainbowreadrules:1470858722019508255> **Rules (READ THESE):**\n` +
-            `• General → <#1462648417120682014>\n` +
-            `• Carnivore → <#1462648847414202388>\n` +
-            `• Herbivore → <#1462648723254411366>\n` +
-            `• Pack-Limits → <#1466464861289447664>\n\n` +
+            `• **General** → <#1462648417120682014>\n` +
+            `• **Carnivore** → <#1462648847414202388>\n` +
+            `• **Herbivore** → <#1462648723254411366>\n` +
+            `• **Pack-Limits** → <#1466464861289447664>\n\n` +
             
             `📔 **Encyclopedia**\n` +
-            `• New to the game? → <#1469392438345859112>\n\n` +
+            `• **New to the game?** → <#1469392438345859112>\n\n` +
 
             `🗣️ Say hi, lurk, or immediately cause problems (within the rules).`
         )

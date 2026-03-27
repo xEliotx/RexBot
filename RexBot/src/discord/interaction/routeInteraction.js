@@ -2,14 +2,15 @@ import { CustomIdPrefix } from "./customIdPrefixes.js";
 import { handleTicketButton } from "../tickets/ticketHandlers.js";
 import { EPHEMERAL } from "../util/ephemeral.js";
 import { handlePlaytimeResetButton } from "./playtimeResetButton.js";
+import { handleDinoRoleSelect } from "../roles/dinoRoles.js";
 
 export async function routeInteraction(interaction, ctx) {
   if (interaction.isButton()) {
-    const handled = await handlePlaytimeResetButton(interaction, {
+    const handledPlaytime = await handlePlaytimeResetButton(interaction, {
       playtimeTracker: ctx.playtimeTracker,
     });
 
-    if (handled) return;
+    if (handledPlaytime) return;
 
     if (interaction.customId.startsWith(CustomIdPrefix.TICKET)) {
       await handleTicketButton(interaction, ctx);
@@ -24,6 +25,9 @@ export async function routeInteraction(interaction, ctx) {
   }
 
   if (interaction.isStringSelectMenu()) {
+    const handledDinoRoles = await handleDinoRoleSelect(interaction, ctx);
+    if (handledDinoRoles) return;
+
     if (interaction.customId.startsWith(CustomIdPrefix.TICKET)) {
       await handleTicketButton(interaction, ctx);
       return;
