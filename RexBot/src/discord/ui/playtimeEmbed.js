@@ -3,11 +3,14 @@ import {
     ButtonBuilder,
     ButtonStyle,
     EmbedBuilder,
+    StringSelectMenuBuilder,
 } from "discord.js";
 
 export const PLAYTIME_RESET_BUTTON_ID = "playtime_reset";
 export const PLAYTIME_RESET_CONFIRM_BUTTON_ID = "playtime_reset_confirm";
 export const PLAYTIME_RESET_CANCEL_BUTTON_ID = "playtime_reset_cancel";
+export const PLAYTIME_EXCLUDE_BUTTON_ID = "playtime_exclude";
+export const PLAYTIME_EXCLUDE_SELECT_ID = "playtime_exclude_select";
 
 export function formatDuration(totalSeconds) {
     const hours = Math.floor(totalSeconds / 3600);
@@ -26,7 +29,9 @@ function rankPrefix(index) {
 
 export function buildPlaytimeEmbed(storeData) {
     const allPlayers = Object.values(storeData.players || {});
-    const topPlayers = [...allPlayers]
+    const visiblePlayers = allPlayers.filter(player => !player.excluded);
+
+    const topPlayers = [...visiblePlayers]
         .sort((a, b) => b.totalSeconds - a.totalSeconds)
         .slice(0, 10);
 
@@ -39,8 +44,8 @@ export function buildPlaytimeEmbed(storeData) {
             .join("\n\n")
         : "*No playtime data yet this month.*";
 
-    const totalTracked = allPlayers.length;
-    const totalSeconds = allPlayers.reduce(
+    const totalTracked = visiblePlayers.length;
+    const totalSeconds = visiblePlayers.reduce(
         (sum, p) => sum + (p.totalSeconds || 0),
         0
     );
@@ -88,6 +93,10 @@ export function buildPlaytimeComponents() {
     return [
         new ActionRowBuilder().addComponents(
             new ButtonBuilder()
+                .setCustomId(PLAYTIME_EXCLUDE_BUTTON_ID)
+                .setLabel("Exclude Players")
+                .setStyle(ButtonStyle.Secondary),
+            new ButtonBuilder()
                 .setCustomId(PLAYTIME_RESET_BUTTON_ID)
                 .setLabel("Reset Monthly Leaderboard")
                 .setStyle(ButtonStyle.Danger)
@@ -106,6 +115,30 @@ export function buildPlaytimeResetConfirmComponents() {
                 .setCustomId(PLAYTIME_RESET_CANCEL_BUTTON_ID)
                 .setLabel("Cancel")
                 .setStyle(ButtonStyle.Secondary)
+        ),
+    ];
+}
+
+export function buildPlaytimeExcludeMenu(storeData) {
+    const players = Object.values(storeData.players || {})
+        .sort((a, b) => b.totalSeconds - a.totalSeconds)
+        .slice(0, 10);
+
+    return [
+        new ActionRowBuilder().addComponents(
+            new StringSelectMenuBuilder()
+                .setCustomId(PLAYTIME_EXCLUDE_SELECT_ID)
+                .setPlaceholder("Select players to exclude")
+                .setMinValues(0)
+                .setMaxValues(players.length || 1)
+                .addOptions(
+                    players.map((player, index) => ({
+                        label: `#${index + 1} ${player.displayName}`,
+                        description: `${formatDuration(player.totalSeconds)}${player.excluded ? " • Excluded" : ""}`,
+                        value: player.playerId,
+                        default: !!player.excluded,
+                    }))
+                )
         ),
     ];
 }

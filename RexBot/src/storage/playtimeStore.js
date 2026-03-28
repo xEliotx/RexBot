@@ -33,8 +33,14 @@ export class PlaytimeStore {
             const raw = fs.readFileSync(this.filePath, "utf8");
             const parsed = raw.trim() ? JSON.parse(raw) : {};
 
+            const players = parsed.players || {};
+
+            for (const playerId of Object.keys(players)) {
+                players[playerId].excluded = players[playerId].excluded || false;
+            }
+
             this.data = {
-                players: parsed.players || {},
+                players,
                 sessions: {},
                 embedChannelId: parsed.embedChannelId || null,
                 embedMessageId: parsed.embedMessageId || null,
@@ -70,6 +76,24 @@ export class PlaytimeStore {
     setEmbedMessage(channelId, messageId) {
         this.data.embedChannelId = channelId;
         this.data.embedMessageId = messageId;
+        this.save();
+    }
+
+    setPlayerExcluded(playerId, excluded = true) {
+        if (!this.data.players[playerId]) return false;
+
+        this.data.players[playerId].excluded = excluded;
+        this.save();
+        return true;
+    }
+
+    setExcludedPlayers(playerIds = []) {
+        const excludedSet = new Set(playerIds);
+
+        for (const playerId of Object.keys(this.data.players)) {
+            this.data.players[playerId].excluded = excludedSet.has(playerId);
+        }
+
         this.save();
     }
 

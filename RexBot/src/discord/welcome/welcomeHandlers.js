@@ -96,24 +96,25 @@ export async function handleMemberJoin(member, { config, logger }) {
         .setColor(embedColor)
         .setTitle(hype)
         .setDescription(
-            `**WELCOME <@${member.id}>**\n\n` +
-            `You’ve entered the ecosystem. Survival is optional.\n\n` +
-			
-            `📢 **Announcements** → <#1465497725448491203>\n` +
-            `🔗 **Steam Linking** → <#1464629212764700844>\n` +
-            `📂 **Dino-Storage** → <#1465518734780399787>\n` +
-            `🎁 **Reward-Center** → <#1479834219067998238>\n\n` +
-			
-            `<a:3712rainbowreadrules:1470858722019508255> **Rules (READ THESE):**\n` +
-            `• **General** → <#1462648417120682014>\n` +
-            `• **Carnivore** → <#1462648847414202388>\n` +
-            `• **Herbivore** → <#1462648723254411366>\n` +
-            `• **Pack-Limits** → <#1466464861289447664>\n\n` +
+            "**WELCOME <@${member.id}>**" +
+            "You’ve entered the ecosystem. Survival is optional.",
+			"",
+            "> • **Announcements** → <#1465497725448491203>",
+            "> • **Steam Linking** → <#1464629212764700844>",
+            "> • **Dino-Storage** → <#1465518734780399787>",
+            "> • **Reward-Center** → <#1479834219067998238>",
+            "> • **Dino-Roles** → <#1487161842701963434>",
+			"",
+            "<a:3712rainbowreadrules:1470858722019508255> **Rules (READ THESE):**",
+            "> • **General** → <#1462648417120682014>",
+            "> • **Carnivore** → <#1462648847414202388>",
+            "> • **Herbivore** → <#1462648723254411366>",
+            "> • **Pack-Limits** → <#1466464861289447664>",
             
-            `📔 **Encyclopedia**\n` +
-            `• **New to the game?** → <#1469392438345859112>\n\n` +
+            "📔 **Encyclopedia**",
+            "> • **New to the game?** → <#1469392438345859112>",
 
-            `🗣️ Say hi, lurk, or immediately cause problems (within the rules).`
+            "🤘 Say hi, lurk, or immediately cause problems (within the rules)."
         )
         //.setThumbnail(member.user.displayAvatarURL({ size: 256 }))
         .setImage("attachment://welcome.png")

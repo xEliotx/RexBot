@@ -1,10 +1,13 @@
+import { SlashCommandBuilder } from "discord.js";
 import { buildDinoRolesMessage } from "./dinoRoles.js";
+import { ChannelScope } from "../guards/channels.js";
 
 export default {
-  data: {
-    name: "dino-roles",
-    description: "Create or update the dinosaur roles panel",
-  },
+  scope: ChannelScope.ANY,
+
+  data: new SlashCommandBuilder()
+    .setName("dino-roles")
+    .setDescription("Create or update the dinosaur roles panel"),
 
   async execute(interaction, ctx) {
     const channelId = ctx.config.channels.dinoRolesChannelId;
@@ -27,13 +30,11 @@ export default {
 
     const payload = buildDinoRolesMessage(interaction.guild);
 
-    let message;
+    let message = null;
+    const existingMessageId = ctx.config.channels.dinoRolesMessageId;
 
-    if (ctx.config.channels.dinoRolesMessageId) {
-      // Try edit existing
-      message = await channel.messages
-        .fetch(ctx.config.channels.dinoRolesMessageId)
-        .catch(() => null);
+    if (existingMessageId) {
+      message = await channel.messages.fetch(existingMessageId).catch(() => null);
 
       if (message) {
         await message.edit(payload);
@@ -46,11 +47,13 @@ export default {
       }
     }
 
-    // Create new panel
     message = await channel.send(payload);
 
     await interaction.reply({
-      content: `✅ Panel created.\n\nNow copy this ID into your .env:\n\`\`\`\nDINO_ROLES_MESSAGE_ID=${message.id}\n\`\`\``,
+      content:
+        `✅ Dino roles panel created.\n\n` +
+        `Add this to your .env:\n` +
+        `\`\`\`\nDINO_ROLES_MESSAGE_ID=${message.id}\n\`\`\``,
       ephemeral: true,
     });
   },

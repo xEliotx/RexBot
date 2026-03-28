@@ -2,7 +2,6 @@ import { config } from "./config.js";
 import { logger } from "./utils/logger.js";
 import { createClient } from "./discord/client.js";
 
-import { ping } from "./discord/commands/ping.js";
 import { setup } from "./discord/commands/setup.js";
 import { postRules } from "./discord/rules/postRulesCommand.js";
 import { handleNewPlayerGuideBookButtons } from "./discord/rules/NewPlayerGuideBook.js";
@@ -45,7 +44,6 @@ const playtimeTracker = new PlaytimeTracker({
 const session = new Map();
 
 const commandMap = new Map([
-  [ping.data.name, ping],
   [setup.data.name, setup],
   [playerdata.data.name, playerdata],
   [postRules.data.name, postRules],
