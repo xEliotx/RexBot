@@ -95,8 +95,8 @@ export async function handleMemberJoin(member, { config, logger }) {
     const embed = new EmbedBuilder()
         .setColor(embedColor)
         .setTitle(hype)
-        .setDescription(
-            "**WELCOME <@${member.id}>**" +
+        .setDescription([
+            `**WELCOME <@${member.id}>**`,
             "You’ve entered the ecosystem. Survival is optional.",
 			"",
             "> • **Announcements** → <#1465497725448491203>",
@@ -110,12 +110,12 @@ export async function handleMemberJoin(member, { config, logger }) {
             "> • **Carnivore** → <#1462648847414202388>",
             "> • **Herbivore** → <#1462648723254411366>",
             "> • **Pack-Limits** → <#1466464861289447664>",
-            
+            "",
             "📔 **Encyclopedia**",
             "> • **New to the game?** → <#1469392438345859112>",
-
+            "",
             "🤘 Say hi, lurk, or immediately cause problems (within the rules)."
-        )
+        ].join("\n"))
         //.setThumbnail(member.user.displayAvatarURL({ size: 256 }))
         .setImage("attachment://welcome.png")
         .setTimestamp();

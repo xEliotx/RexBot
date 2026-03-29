@@ -22,6 +22,9 @@ export const config = {
   roles: {
     adminRoleId: must("ADMIN_ROLE_ID"),
     adminReportRoleId: must("ADMIN_REPORT_ROLE_ID"),
+    headAdminRoleId: optional("HEAD_ADMIN_ROLE_ID", ""),
+    ownerRoleId: optional("OWNER_ROLE_ID", ""),
+    moderatorRoleId: optional("MODERATOR_ROLE_ID", ""),
 
     dinoRoles: {
       allo: optional("ROLE_ALLO_ID", ""),
@@ -59,7 +62,10 @@ export const config = {
     ticketInactivityCheckMinutes: Number(process.env.TICKET_INACTIVITY_CHECK_MINUTES ?? 10),
     ticketWarnBeforeHours: Number(process.env.TICKET_WARN_BEFORE_HOURS ?? 1),
     ticketLogsChannelId: optional("TICKET_LOGS_CHANNEL_ID", ""),
+    adminReportLogsChannelId: optional("ADMIN_REPORT_LOGS_CHANNEL_ID", ""),
     ticketCloseDmEnabled: optional("TICKET_CLOSE_DM_ENABLED", "false").toLowerCase() === "true",
+    ticketPanelChannelId: optional("TICKET_PANEL_CHANNEL_ID", ""),
+    ticketPanelMessageId: optional("TICKET_PANEL_MESSAGE_ID", ""),
 
     dinoRolesChannelId: optional("DINO_ROLES_CHANNEL_ID", ""),
     dinoRolesMessageId: optional("DINO_ROLES_MESSAGE_ID", ""),

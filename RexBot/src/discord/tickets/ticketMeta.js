@@ -4,7 +4,10 @@ export function parseTicketTopic(topic = "") {
     const ticketType = topic.match(/ticket_type=([^;]+)/)?.[1] ?? null;
     const lastActivityMs = Number(topic.match(/last_activity=(\d+)/)?.[1] ?? 0);
     const warned = (topic.match(/warned=(\d+)/)?.[1] ?? "0") === "1";
-    return { ownerId, ticketNum, ticketType, lastActivityMs, warned };
+    const claimedBy = topic.match(/claimed_by=(\d+)/)?.[1] ?? null;
+    const ticketMessageId = topic.match(/ticket_message=(\d+)/)?.[1] ?? null;
+
+    return { ownerId, ticketNum, ticketType, lastActivityMs, warned, claimedBy, ticketMessageId };
 }
 
 export function setTopicValue(topic = "", key, value) {
@@ -15,6 +18,13 @@ export function setTopicValue(topic = "", key, value) {
     }
 
     return topic ? `${topic};${key}=${safeValue}` : `${key}=${safeValue}`;
+}
+
+export function removeTopicValue(topic = "", key) {
+    return topic
+        .replace(new RegExp(`(?:^|;)${key}=[^;]*`), "")
+        .replace(/^;/, "")
+        .replace(/;;+/g, ";");
 }
 
 export function updateTicketActivityTopic(topic = "", timestamp = Date.now()) {

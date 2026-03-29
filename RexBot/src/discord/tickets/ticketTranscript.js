@@ -100,7 +100,13 @@ export async function buildTicketTranscriptFiles(channel) {
 }
 
 async function resolveLogChannel(channel, config) {
-    const logChannelId = config.channels.ticketLogsChannelId;
+    const meta = parseTicketTopic(channel.topic ?? "");
+
+    const logChannelId =
+        meta.ticketType === "admin_report"
+            ? config.channels.adminReportLogsChannelId
+            : config.channels.ticketLogsChannelId;
+
     if (!logChannelId) return null;
 
     const logChannel = await channel.guild.channels.fetch(logChannelId).catch(() => null);
@@ -131,6 +137,7 @@ export async function sendTicketTranscript(channel, ctx, details = {}) {
             { name: "⚙️ Closure Mode", value: details.closureMode ?? "Unknown", inline: true },
             { name: "💬 Channel", value: `#${channel.name}`, inline: true },
             { name: "📝 Reason", value: details.reason ?? "Resolved", inline: false },
+            { name: "👤 Claimed By", value: details.claimedBy ?? "Not claimed", inline: true },
         )
         .setFooter({
             text: `Channel ID: ${channel.id}`,
@@ -138,8 +145,10 @@ export async function sendTicketTranscript(channel, ctx, details = {}) {
         .setTimestamp();
 
     await logChannel.send({
-        content: `Transcript for ticket #${meta.ticketNum ?? "Unknown"}`,
         embeds: [embed],
+    });
+
+    await logChannel.send({
         files: [files.txt],
     });
 }

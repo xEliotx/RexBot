@@ -8,22 +8,23 @@ export async function notifyTicketOwnerClosed(channel, details = {}, ctx = {}) {
     const { ownerId, ticketNum, ticketType } = parseTicketTopic(channel.topic ?? "");
     if (!ownerId) return false;
 
+    if (ticketType === "admin_report") return false;
+
     const user = await channel.client.users.fetch(ownerId).catch(() => null);
     if (!user) return false;
 
     const files = await buildTicketTranscriptFiles(channel);
 
     const embed = new EmbedBuilder()
-        .setColor(0x5865f2)
-        .setTitle("📁 Your Ticket Transcript")
-        .setDescription("Your ticket has been closed. Your transcript file is attached.")
+        .setColor(0x2b2d31)
+        .setTitle("Your ticket was closed")
+        .setDescription("Your transcript file is attached in the message below.")
         .addFields(
-            { name: "Ticket ID", value: `#${ticketNum ?? "Unknown"}`, inline: true },
-            { name: "Type", value: ticketType ?? "Unknown", inline: true },
-            { name: "Closed By", value: details.closedBy ?? "System", inline: true },
-            { name: "Claimed By", value: details.claimedBy ?? "Not claimed", inline: true },
-            { name: "Closure Mode", value: details.closureMode ?? "Unknown", inline: true },
-            { name: "Reason", value: details.reason ?? "Resolved", inline: false },
+            { name: "🆔 Ticket ID", value: String(ticketNum ?? "Unknown"), inline: true },
+            { name: "📂 Type", value: ticketType ?? "Unknown", inline: true },
+            { name: "❌ Closed By", value: details.closedBy ?? "System", inline: true },
+            { name: "⚙️ Closure Mode", value: details.closureMode ?? "Unknown", inline: true },
+            { name: "📝 Reason", value: details.reason ?? "Resolved", inline: false },
         )
         .setFooter({
             text: channel.guild?.name ?? "Ticket System",
@@ -32,6 +33,10 @@ export async function notifyTicketOwnerClosed(channel, details = {}, ctx = {}) {
 
     await user.send({
         embeds: [embed],
+    });
+
+    await user.send({
+        content: "Here is your ticket transcript file.",
         files: [files.txt],
     });
 

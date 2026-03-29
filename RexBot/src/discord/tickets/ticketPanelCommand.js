@@ -8,79 +8,89 @@ import {
     StringSelectMenuOptionBuilder,
 } from "discord.js";
 
-const TICKET_PANEL_CHANNEL_ID = "1467572329444938024";
+export function buildTicketPanelMessage(guild) {
+    const embed = new EmbedBuilder()
+        .setColor(0xff0033)
+        .setAuthor({
+            name: guild?.name ?? "Ticket System",
+            iconURL: guild?.iconURL?.() ?? undefined,
+        })
+        .setTitle("🎫 Support Tickets")
+        .setImage("https://cdn.discordapp.com/attachments/778652435227869214/1486468541002809565/Tickets.png?ex=69c59d35&is=69c44bb5&hm=742a1e032f0f9ba772a09086ef39c62c0d3a347cb447d7bc443cd7ebdc7ee909&")
+        .setDescription(
+            [
+                "**Need help?** Open a ticket and staff will respond.",
+                "",
+                "📌 Please include:",
+                "> • What happened.",
+                "> • When it happened.",
+                "> • Screenshots/clips if possible.",
+                "> • General details to help us assist you faster.",
+            ].join("\n")
+        );
+
+    const row = new ActionRowBuilder().addComponents(
+        new StringSelectMenuBuilder()
+            .setCustomId("ticket:create")
+            .setPlaceholder("📩 Select a ticket type…")
+            .addOptions(
+                new StringSelectMenuOptionBuilder()
+                    .setLabel("Ingame Support")
+                    .setValue("ingame_support")
+                    .setDescription("Issues while playing on the server")
+                    .setEmoji("🆘"),
+
+                new StringSelectMenuOptionBuilder()
+                    .setLabel("Report a Player")
+                    .setValue("report_player")
+                    .setDescription("Report rule-breaking behavior")
+                    .setEmoji("😡"),
+
+                new StringSelectMenuOptionBuilder()
+                    .setLabel("Discord Support")
+                    .setValue("discord_support")
+                    .setDescription("Issues with Discord, roles, or access")
+                    .setEmoji("⌨️"),
+
+                new StringSelectMenuOptionBuilder()
+                    .setLabel("Admin Report")
+                    .setValue("admin_report")
+                    .setDescription("Sensitive issues (owners only)")
+                    .setEmoji("🛑"),
+
+                new StringSelectMenuOptionBuilder()
+                    .setLabel("Other")
+                    .setValue("other")
+                    .setDescription("Anything else")
+                    .setEmoji("❓"),
+            )
+    );
+
+    return {
+        embeds: [embed],
+        components: [row],
+    };
+}
 
 export const ticketPanel = {
     data: new SlashCommandBuilder()
         .setName("ticketpanel")
-        .setDescription("Post the ticket panel in the Create-a-Ticket channel (admin only).")
+        .setDescription("Create or update the ticket panel (admin only).")
         .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
 
-    // Option A: only usable in admin channel (your guard checks this)
     scope: "ADMIN",
 
-    async execute(interaction) {
-        const embed = new EmbedBuilder()
-            .setColor(0xff0033)
-            .setAuthor({
-                name: interaction.guild?.name ?? "Ticket System",
-                iconURL: interaction.guild?.iconURL?.() ?? undefined,
-            })
-            .setTitle("🎫 Support Tickets")
-            .setImage("https://cdn.discordapp.com/attachments/778652435227869214/1486468541002809565/Tickets.png?ex=69c59d35&is=69c44bb5&hm=742a1e032f0f9ba772a09086ef39c62c0d3a347cb447d7bc443cd7ebdc7ee909&")
-            .setDescription(
-                [
-                    "**Need help?** Open a ticket and staff will respond.",
-                    "",
-                    "📌 Please include:",
-                    "> • What happened.",
-                    "> • When it happened.",
-                    "> • Screenshots/clips if possible.",
-                    "> • General details to help us assist you faster.",
-                ].join("\n")
-            );
+    async execute(interaction, ctx) {
+        const channelId = ctx.config.channels.ticketPanelChannelId;
+        if (!channelId) {
+            await interaction.reply({
+                content: "❌ TICKET_PANEL_CHANNEL_ID is not set.",
+                flags: MessageFlags.Ephemeral,
+            });
+            return;
+        }
 
-        const row = new ActionRowBuilder().addComponents(
-            new StringSelectMenuBuilder()
-                .setCustomId("ticket:create")
-                .setPlaceholder("📩Select a ticket type…")
-                .addOptions(
-                    new StringSelectMenuOptionBuilder()
-                        .setLabel("Ingame Support")
-                        .setValue("ingame_support")
-                        .setDescription("Issues while playing on the server")
-                        .setEmoji("🆘"),
-
-                    new StringSelectMenuOptionBuilder()
-                        .setLabel("Report a Player")
-                        .setValue("report_player")
-                        .setDescription("Report rule-breaking behavior")
-                        .setEmoji("😡"),
-
-                    new StringSelectMenuOptionBuilder()
-                        .setLabel("Discord Support")
-                        .setValue("discord_support")
-                        .setDescription("Issues with Discord, roles, or access")
-                        .setEmoji("⌨️"),
-
-                    new StringSelectMenuOptionBuilder()
-                        .setLabel("Admin Report")
-                        .setValue("admin_report")
-                        .setDescription("Sensitive issues (admins only)")
-                        .setEmoji("🛑"),
-
-                    new StringSelectMenuOptionBuilder()
-                        .setLabel("Other")
-                        .setValue("other")
-                        .setDescription("Anything else")
-                        .setEmoji("❓"),
-                )
-        );
-
-
-        const panelChannel = await interaction.client.channels
-            .fetch(TICKET_PANEL_CHANNEL_ID)
-            .catch(() => null);
+        const panelChannel = await interaction.client.channels.fetch(channelId).catch(() => null);
 
         if (!panelChannel || !panelChannel.isTextBased()) {
             await interaction.reply({
@@ -90,7 +100,6 @@ export const ticketPanel = {
             return;
         }
 
-        // 🔒 Make the panel channel button-only
         const everyoneId = interaction.guild.id;
         await panelChannel.permissionOverwrites.edit(everyoneId, {
             SendMessages: false,
@@ -98,15 +107,30 @@ export const ticketPanel = {
             CreatePrivateThreads: false,
         });
 
-        // Send the panel message
-        await panelChannel.send({
-            embeds: [embed],
-            components: [row],
-        });
+        const payload = buildTicketPanelMessage(interaction.guild);
+        const existingMessageId = ctx.config.channels.ticketPanelMessageId;
 
-        // Confirm privately to the admin
+        if (existingMessageId) {
+            const existingMessage = await panelChannel.messages.fetch(existingMessageId).catch(() => null);
+
+            if (existingMessage) {
+                await existingMessage.edit(payload);
+
+                await interaction.reply({
+                    content: "✅ Ticket panel updated.",
+                    flags: MessageFlags.Ephemeral,
+                });
+                return;
+            }
+        }
+
+        const newMessage = await panelChannel.send(payload);
+
         await interaction.reply({
-            content: `✅ Ticket panel posted in <#${TICKET_PANEL_CHANNEL_ID}>`,
+            content:
+                `✅ Ticket panel created.\n\n` +
+                `Add this to your .env:\n` +
+                `\`\`\`\nTICKET_PANEL_MESSAGE_ID=${newMessage.id}\n\`\`\``,
             flags: MessageFlags.Ephemeral,
         });
     },
