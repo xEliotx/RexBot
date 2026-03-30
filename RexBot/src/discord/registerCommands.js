@@ -7,6 +7,11 @@ import { postRules } from "./rules/postRulesCommand.js";
 import { ticketPanel } from "./tickets/ticketPanelCommand.js";
 import { rconplayers } from "./commands/rconplayers.js";
 import { playerdata } from "./commands/playerdata.js";
+import { warn } from "./commands/warn.js";
+import { note } from "./commands/note.js";
+import { history } from "./commands/history.js";
+import { clean } from "./commands/clean.js";
+import { ban } from "./commands/ban.js";
 import dinoRolePanelCommand from "./roles/dinoRolePanelCommand.js";
 
 const commands = [
@@ -17,6 +22,11 @@ const commands = [
   ticketPanel.data.toJSON(),
   playerdata.data.toJSON(),
   dinoRolePanelCommand.data.toJSON(),
+  warn.data.toJSON(),
+  note.data.toJSON(),
+  history.data.toJSON(),
+  clean.data.toJSON(),
+  ban.data.toJSON(),
 ];
 
 async function main() {

@@ -66,6 +66,7 @@ export const config = {
     ticketCloseDmEnabled: optional("TICKET_CLOSE_DM_ENABLED", "false").toLowerCase() === "true",
     ticketPanelChannelId: optional("TICKET_PANEL_CHANNEL_ID", ""),
     ticketPanelMessageId: optional("TICKET_PANEL_MESSAGE_ID", ""),
+    playerRecordsChannelId: optional("PLAYER_RECORDS_CHANNEL_ID", ""),
 
     dinoRolesChannelId: optional("DINO_ROLES_CHANNEL_ID", ""),
     dinoRolesMessageId: optional("DINO_ROLES_MESSAGE_ID", ""),

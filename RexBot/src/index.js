@@ -21,7 +21,13 @@ import { handleMemberJoin } from "./discord/welcome/welcomeHandlers.js";
 import { ticketPanel } from "./discord/tickets/ticketPanelCommand.js";
 import { startTicketInactivityWatcher } from "./discord/tickets/ticketInactivity.js";
 import { playerdata } from "./discord/commands/playerdata.js";
-import  dinoRolePanelCommand  from "./discord/roles/dinoRolePanelCommand.js";
+import dinoRolePanelCommand from "./discord/roles/dinoRolePanelCommand.js";
+
+import { warn } from "./discord/commands/warn.js";
+import { note } from "./discord/commands/note.js";
+import { history } from "./discord/commands/history.js";
+import { clean } from "./discord/commands/clean.js";
+import { ban } from "./discord/commands/ban.js";
 
 const client = createClient();
 
@@ -50,6 +56,11 @@ const commandMap = new Map([
   [ticketPanel.data.name, ticketPanel],
   [setupplaytime.data.name, setupplaytime],
   [dinoRolePanelCommand.data.name, dinoRolePanelCommand],
+  [warn.data.name, warn],
+  [note.data.name, note],
+  [history.data.name, history],
+  [clean.data.name, clean],
+  [ban.data.name, ban],
 ]);
 
 client.once("clientready", () => {
