@@ -116,15 +116,15 @@ export function buildPopulationEmbed(speciesCounts) {
 
     const dominantOmnivoreText = dominantOmnivore
         ? `${speciesEmojis[dominantOmnivore.species] || "🍄"} **${dominantOmnivore.species}**`
-        : "None";
+        : "**None**";
 
     const dominantCarnivoreText = dominantCarnivore
         ? `${speciesEmojis[dominantCarnivore.species] || "🦖"} **${dominantCarnivore.species}**`
-        : "None";
+        : "**None**";
 
     const dominantHerbivoreText = dominantHerbivore
         ? `${speciesEmojis[dominantHerbivore.species] || "🦕"} **${dominantHerbivore.species}**`
-        : "None";
+        : "**None**";
 
     const imbalanceText = getImbalanceText(carnivores, herbivores, omnivores);
 

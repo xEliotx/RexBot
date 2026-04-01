@@ -3,9 +3,9 @@
     "76561198043039568": {
       "playerId": "76561198043039568",
       "displayName": "RawBloOds",
-      "totalSeconds": 177545,
+      "totalSeconds": 178141,
       "firstSeen": "2026-03-20T19:32:28.993Z",
-      "lastSeen": "2026-04-01T00:12:04.411Z",
+      "lastSeen": "2026-04-01T00:22:37.917Z",
       "excluded": true
     },
     "76561198350523989": {
@@ -27,9 +27,9 @@
     "76561199761140140": {
       "playerId": "76561199761140140",
       "displayName": "SweatyTBagger",
-      "totalSeconds": 23903,
+      "totalSeconds": 24379,
       "firstSeen": "2026-03-20T19:32:28.993Z",
-      "lastSeen": "2026-04-01T00:11:04.407Z",
+      "lastSeen": "2026-04-01T00:22:37.917Z",
       "excluded": false
     },
     "76561198271252465": {
@@ -43,9 +43,9 @@
     "76561198415040588": {
       "playerId": "76561198415040588",
       "displayName": "Eliot™",
-      "totalSeconds": 46392,
+      "totalSeconds": 48062,
       "firstSeen": "2026-03-20T19:40:29.111Z",
-      "lastSeen": "2026-04-01T00:12:04.411Z",
+      "lastSeen": "2026-04-01T00:40:38.006Z",
       "excluded": true
     },
     "76561198112555382": {
@@ -99,9 +99,9 @@
     "76561198069329026": {
       "playerId": "76561198069329026",
       "displayName": "The_Silent_King",
-      "totalSeconds": 21281,
+      "totalSeconds": 23607,
       "firstSeen": "2026-03-20T22:18:30.252Z",
-      "lastSeen": "2026-04-01T00:12:04.411Z",
+      "lastSeen": "2026-04-01T00:51:38.043Z",
       "excluded": false
     },
     "76561199092564658": {
@@ -147,9 +147,9 @@
     "76561199208124144": {
       "playerId": "76561199208124144",
       "displayName": "UgaUga",
-      "totalSeconds": 121803,
+      "totalSeconds": 122876,
       "firstSeen": "2026-03-25T15:39:50.368Z",
-      "lastSeen": "2026-04-01T00:12:04.411Z",
+      "lastSeen": "2026-04-01T00:30:37.890Z",
       "excluded": false
     },
     "76561198367087906": {
@@ -291,80 +291,49 @@
     "76561198070955535": {
       "playerId": "76561198070955535",
       "displayName": "6BusUnder",
-      "totalSeconds": 20859,
+      "totalSeconds": 23484,
       "firstSeen": "2026-03-31T16:05:00.861Z",
-      "lastSeen": "2026-04-01T00:12:04.411Z"
+      "lastSeen": "2026-04-01T00:56:38.046Z",
+      "excluded": false
     },
     "76561199861212005": {
       "playerId": "76561199861212005",
       "displayName": "Gandalfica",
       "totalSeconds": 4175,
       "firstSeen": "2026-03-31T19:57:02.458Z",
-      "lastSeen": "2026-03-31T21:07:03.316Z"
+      "lastSeen": "2026-03-31T21:07:03.316Z",
+      "excluded": false
     },
     "76561199728343574": {
       "playerId": "76561199728343574",
       "displayName": "allenpatrick9996",
       "totalSeconds": 536,
       "firstSeen": "2026-03-31T20:11:02.735Z",
-      "lastSeen": "2026-03-31T20:20:02.828Z"
+      "lastSeen": "2026-03-31T20:20:02.828Z",
+      "excluded": false
     },
     "76561199093724577": {
       "playerId": "76561199093724577",
       "displayName": "smoke inhaler",
-      "totalSeconds": 5243,
+      "totalSeconds": 7867,
       "firstSeen": "2026-03-31T21:32:03.445Z",
-      "lastSeen": "2026-04-01T00:12:04.411Z"
+      "lastSeen": "2026-04-01T00:56:38.046Z",
+      "excluded": false
     }
   },
   "sessions": {
-    "76561199208124144": {
-      "playerId": "76561199208124144",
-      "displayName": "UgaUga",
-      "joinedAt": "2026-03-31T19:04:01.750Z",
-      "lastSeen": "2026-04-01T00:12:04.411Z",
-      "missedPolls": 0
-    },
-    "76561198069329026": {
-      "playerId": "76561198069329026",
-      "displayName": "The_Silent_King",
-      "joinedAt": "2026-03-31T21:10:03.333Z",
-      "lastSeen": "2026-04-01T00:12:04.411Z",
-      "missedPolls": 0
-    },
-    "76561199761140140": {
-      "playerId": "76561199761140140",
-      "displayName": "SweatyTBagger",
-      "joinedAt": "2026-03-31T22:08:03.652Z",
-      "lastSeen": "2026-04-01T00:11:04.407Z",
-      "missedPolls": 1
-    },
-    "76561198043039568": {
-      "playerId": "76561198043039568",
-      "displayName": "RawBloOds",
-      "joinedAt": "2026-03-31T22:31:03.755Z",
-      "lastSeen": "2026-04-01T00:12:04.411Z",
-      "missedPolls": 0
-    },
     "76561198070955535": {
       "playerId": "76561198070955535",
       "displayName": "6BusUnder",
-      "joinedAt": "2026-03-31T22:59:03.995Z",
-      "lastSeen": "2026-04-01T00:12:04.411Z",
+      "joinedAt": "2026-04-01T00:12:37.050Z",
+      "lastSeen": "2026-04-01T00:56:38.046Z",
       "missedPolls": 0
     },
     "76561199093724577": {
       "playerId": "76561199093724577",
       "displayName": "smoke inhaler",
-      "joinedAt": "2026-03-31T23:41:04.164Z",
-      "lastSeen": "2026-04-01T00:12:04.411Z",
-      "missedPolls": 0
-    },
-    "76561198415040588": {
-      "playerId": "76561198415040588",
-      "displayName": "Eliot™",
-      "joinedAt": "2026-03-31T23:55:04.235Z",
-      "lastSeen": "2026-04-01T00:12:04.411Z",
+      "joinedAt": "2026-04-01T00:12:37.050Z",
+      "lastSeen": "2026-04-01T00:56:38.046Z",
       "missedPolls": 0
     }
   },
