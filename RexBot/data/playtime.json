@@ -3,49 +3,49 @@
     "76561199208124144": {
       "playerId": "76561199208124144",
       "displayName": "UgaUga",
-      "totalSeconds": 30221,
+      "totalSeconds": 93061,
       "firstSeen": "2026-04-02T21:33:21.297Z",
-      "lastSeen": "2026-04-04T15:14:33.473Z",
+      "lastSeen": "2026-04-08T18:16:29.702Z",
       "excluded": true
     },
     "76561198121969588": {
       "playerId": "76561198121969588",
       "displayName": "Mr.W",
-      "totalSeconds": 29566,
+      "totalSeconds": 49360,
       "firstSeen": "2026-04-02T22:32:21.646Z",
-      "lastSeen": "2026-04-04T15:14:33.473Z",
+      "lastSeen": "2026-04-05T18:30:04.363Z",
       "excluded": true
     },
     "76561198415040588": {
       "playerId": "76561198415040588",
       "displayName": "Eliot™",
-      "totalSeconds": 30996,
+      "totalSeconds": 48466,
       "firstSeen": "2026-04-02T23:57:22.312Z",
-      "lastSeen": "2026-04-03T23:08:28.040Z",
+      "lastSeen": "2026-04-06T12:37:12.622Z",
       "excluded": true
     },
     "76561199106481566": {
       "playerId": "76561199106481566",
       "displayName": "nykalatesian",
-      "totalSeconds": 11203,
+      "totalSeconds": 20508,
       "firstSeen": "2026-04-03T00:26:02.849Z",
-      "lastSeen": "2026-04-04T07:14:30.703Z",
+      "lastSeen": "2026-04-04T19:47:47.124Z",
       "excluded": false
     },
     "76561199761140140": {
       "playerId": "76561199761140140",
       "displayName": "SweatyTBagger",
-      "totalSeconds": 3757,
+      "totalSeconds": 18064,
       "firstSeen": "2026-04-03T01:01:11.070Z",
-      "lastSeen": "2026-04-04T15:14:33.473Z",
+      "lastSeen": "2026-04-04T19:15:46.731Z",
       "excluded": false
     },
     "76561198796992433": {
       "playerId": "76561198796992433",
       "displayName": "ffojillo",
-      "totalSeconds": 15734,
+      "totalSeconds": 16928,
       "firstSeen": "2026-04-03T09:51:13.961Z",
-      "lastSeen": "2026-04-03T23:32:28.100Z",
+      "lastSeen": "2026-04-04T20:50:47.837Z",
       "excluded": true
     },
     "76561198872337835": {
@@ -59,33 +59,33 @@
     "76561198043039568": {
       "playerId": "76561198043039568",
       "displayName": "RawBloOds",
-      "totalSeconds": 29268,
+      "totalSeconds": 89485,
       "firstSeen": "2026-04-03T12:00:14.821Z",
-      "lastSeen": "2026-04-04T15:14:33.473Z",
+      "lastSeen": "2026-04-08T18:14:29.612Z",
       "excluded": true
     },
     "76561197980992315": {
       "playerId": "76561197980992315",
       "displayName": "NickFX SKINS",
-      "totalSeconds": 19433,
+      "totalSeconds": 26881,
       "firstSeen": "2026-04-03T17:44:16.794Z",
-      "lastSeen": "2026-04-04T15:14:33.473Z",
+      "lastSeen": "2026-04-04T17:20:45.242Z",
       "excluded": false
     },
     "76561199385936384": {
       "playerId": "76561199385936384",
       "displayName": "tums117",
-      "totalSeconds": 17525,
+      "totalSeconds": 31836,
       "firstSeen": "2026-04-03T18:15:16.814Z",
-      "lastSeen": "2026-04-03T23:39:28.144Z",
+      "lastSeen": "2026-04-04T19:35:46.935Z",
       "excluded": true
     },
     "76561198070815811": {
       "playerId": "76561198070815811",
       "displayName": "Nohbus",
-      "totalSeconds": 16273,
+      "totalSeconds": 28024,
       "firstSeen": "2026-04-03T18:24:16.826Z",
-      "lastSeen": "2026-04-03T23:08:28.040Z",
+      "lastSeen": "2026-04-08T18:05:29.563Z",
       "excluded": false
     },
     "76561198069329026": {
@@ -107,68 +107,167 @@
     "76561198257294212": {
       "playerId": "76561198257294212",
       "displayName": "Lisan Al Ghaib",
-      "totalSeconds": 5544,
+      "totalSeconds": 13777,
       "firstSeen": "2026-04-03T19:37:17.172Z",
-      "lastSeen": "2026-04-03T21:10:59.969Z",
+      "lastSeen": "2026-04-04T20:48:47.891Z",
       "excluded": true
     },
     "76561198350523989": {
       "playerId": "76561198350523989",
       "displayName": "NatureStrike",
-      "totalSeconds": 8167,
+      "totalSeconds": 16334,
       "firstSeen": "2026-04-03T19:55:17.300Z",
-      "lastSeen": "2026-04-03T22:13:27.554Z",
+      "lastSeen": "2026-04-07T20:46:22.927Z",
       "excluded": true
     },
     "76561197972429208": {
       "playerId": "76561197972429208",
       "displayName": "zlo",
-      "totalSeconds": 596,
+      "totalSeconds": 6137,
       "firstSeen": "2026-04-04T15:04:33.317Z",
-      "lastSeen": "2026-04-04T15:14:33.473Z"
+      "lastSeen": "2026-04-04T16:48:44.749Z",
+      "excluded": false
+    },
+    "76561199717290698": {
+      "playerId": "76561199717290698",
+      "displayName": "Stephee TH",
+      "totalSeconds": 2264,
+      "firstSeen": "2026-04-04T16:31:44.571Z",
+      "lastSeen": "2026-04-04T17:09:45.018Z"
+    },
+    "76561198139179745": {
+      "playerId": "76561198139179745",
+      "displayName": "Kyda",
+      "totalSeconds": 1907,
+      "firstSeen": "2026-04-04T17:02:44.957Z",
+      "lastSeen": "2026-04-04T17:34:45.374Z"
+    },
+    "76561198364156694": {
+      "playerId": "76561198364156694",
+      "displayName": "Papst Franziskus",
+      "totalSeconds": 0,
+      "firstSeen": "2026-04-05T00:50:51.039Z",
+      "lastSeen": "2026-04-05T00:50:51.039Z"
+    },
+    "76561199768343068": {
+      "playerId": "76561199768343068",
+      "displayName": "xslyvgxdb",
+      "totalSeconds": 298,
+      "firstSeen": "2026-04-05T15:57:02.590Z",
+      "lastSeen": "2026-04-05T16:02:02.711Z"
+    },
+    "76561198331592000": {
+      "playerId": "76561198331592000",
+      "displayName": "VintageTacit",
+      "totalSeconds": 239,
+      "firstSeen": "2026-04-06T10:02:11.884Z",
+      "lastSeen": "2026-04-06T10:06:11.883Z"
+    },
+    "76561198394569757": {
+      "playerId": "76561198394569757",
+      "displayName": "QueenOfPompeii",
+      "totalSeconds": 0,
+      "firstSeen": "2026-04-06T11:49:12.376Z",
+      "lastSeen": "2026-04-06T11:49:12.376Z"
+    },
+    "76561198774546914": {
+      "playerId": "76561198774546914",
+      "displayName": "DeepSm0ke",
+      "totalSeconds": 0,
+      "firstSeen": "2026-04-06T20:07:15.099Z",
+      "lastSeen": "2026-04-06T20:07:15.099Z"
+    },
+    "76561198185078318": {
+      "playerId": "76561198185078318",
+      "displayName": "Garlyks",
+      "totalSeconds": 3818,
+      "firstSeen": "2026-04-06T20:53:15.269Z",
+      "lastSeen": "2026-04-06T21:57:15.651Z"
+    },
+    "76561198759772618": {
+      "playerId": "76561198759772618",
+      "displayName": "WhyNoir",
+      "totalSeconds": 238,
+      "firstSeen": "2026-04-07T16:11:21.542Z",
+      "lastSeen": "2026-04-07T16:15:21.553Z"
+    },
+    "76561199230852431": {
+      "playerId": "76561199230852431",
+      "displayName": "kevi taz",
+      "totalSeconds": 2979,
+      "firstSeen": "2026-04-07T21:49:23.505Z",
+      "lastSeen": "2026-04-07T22:39:23.802Z"
+    },
+    "76561199048705342": {
+      "playerId": "76561199048705342",
+      "displayName": "Tobi1Nation",
+      "totalSeconds": 8462,
+      "firstSeen": "2026-04-08T05:29:25.672Z",
+      "lastSeen": "2026-04-08T07:51:26.382Z"
+    },
+    "76561199262144359": {
+      "playerId": "76561199262144359",
+      "displayName": "Jes",
+      "totalSeconds": 2144,
+      "firstSeen": "2026-04-08T06:49:26.109Z",
+      "lastSeen": "2026-04-08T07:25:26.286Z"
+    },
+    "76561198022058040": {
+      "playerId": "76561198022058040",
+      "displayName": "Kalastria",
+      "totalSeconds": 179,
+      "firstSeen": "2026-04-08T09:03:26.768Z",
+      "lastSeen": "2026-04-08T09:06:26.796Z"
+    },
+    "76561199758629801": {
+      "playerId": "76561199758629801",
+      "displayName": "Akuma",
+      "totalSeconds": 2506,
+      "firstSeen": "2026-04-08T11:28:27.453Z",
+      "lastSeen": "2026-04-08T12:10:27.733Z"
+    },
+    "76561198070955535": {
+      "playerId": "76561198070955535",
+      "displayName": "6BusUnder",
+      "totalSeconds": 2324,
+      "firstSeen": "2026-04-08T12:05:27.697Z",
+      "lastSeen": "2026-04-08T18:16:29.702Z"
+    },
+    "76561199746072920": {
+      "playerId": "76561199746072920",
+      "displayName": "oneshotking89",
+      "totalSeconds": 298,
+      "firstSeen": "2026-04-08T12:26:27.794Z",
+      "lastSeen": "2026-04-08T12:31:27.830Z"
+    },
+    "76561198336309832": {
+      "playerId": "76561198336309832",
+      "displayName": "VylliSChSi",
+      "totalSeconds": 7211,
+      "firstSeen": "2026-04-08T13:13:27.962Z",
+      "lastSeen": "2026-04-08T16:38:29.096Z"
+    },
+    "76561199811095012": {
+      "playerId": "76561199811095012",
+      "displayName": "SPL",
+      "totalSeconds": 1253,
+      "firstSeen": "2026-04-08T15:38:28.785Z",
+      "lastSeen": "2026-04-08T15:59:28.880Z"
     }
   },
   "sessions": {
-    "76561198121969588": {
-      "playerId": "76561198121969588",
-      "displayName": "Mr.W",
-      "joinedAt": "2026-04-04T14:47:33.273Z",
-      "lastSeen": "2026-04-04T15:14:33.473Z",
-      "missedPolls": 0
-    },
     "76561199208124144": {
       "playerId": "76561199208124144",
       "displayName": "UgaUga",
-      "joinedAt": "2026-04-04T14:50:33.272Z",
-      "lastSeen": "2026-04-04T15:14:33.473Z",
+      "joinedAt": "2026-04-08T14:41:28.500Z",
+      "lastSeen": "2026-04-08T18:16:29.702Z",
       "missedPolls": 0
     },
-    "76561198043039568": {
-      "playerId": "76561198043039568",
-      "displayName": "RawBloOds",
-      "joinedAt": "2026-04-04T15:03:33.342Z",
-      "lastSeen": "2026-04-04T15:14:33.473Z",
-      "missedPolls": 0
-    },
-    "76561197980992315": {
-      "playerId": "76561197980992315",
-      "displayName": "NickFX SKINS",
-      "joinedAt": "2026-04-04T15:03:33.342Z",
-      "lastSeen": "2026-04-04T15:14:33.473Z",
-      "missedPolls": 0
-    },
-    "76561197972429208": {
-      "playerId": "76561197972429208",
-      "displayName": "zlo",
-      "joinedAt": "2026-04-04T15:04:33.317Z",
-      "lastSeen": "2026-04-04T15:14:33.473Z",
-      "missedPolls": 0
-    },
-    "76561199761140140": {
-      "playerId": "76561199761140140",
-      "displayName": "SweatyTBagger",
-      "joinedAt": "2026-04-04T15:10:33.339Z",
-      "lastSeen": "2026-04-04T15:14:33.473Z",
+    "76561198070955535": {
+      "playerId": "76561198070955535",
+      "displayName": "6BusUnder",
+      "joinedAt": "2026-04-08T18:09:29.673Z",
+      "lastSeen": "2026-04-08T18:16:29.702Z",
       "missedPolls": 0
     }
   },

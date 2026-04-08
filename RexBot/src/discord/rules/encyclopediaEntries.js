@@ -22,6 +22,7 @@ export const NEW_PLAYER_GUIDE = createEncyclopediaEntry({
   },
   imageFiles: [
     "assets/Map.png",
+    "assets/helper.png",
     "assets/Compassmeanings.png",
     "assets/Staminasystem.png",
     "assets/beginnnerfriendlydino.png",
