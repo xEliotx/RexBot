@@ -183,10 +183,12 @@ export function buildDinoRolesMessage(guild) {
         .setImage("https://cdn.discordapp.com/attachments/778652435227869214/1487194622147952784/DinoRoles.png?ex=69c8416c&is=69c6efec&hm=c8c21f14660f8bedcc3d40c941cb4d869974b7927c35ba77ba7f6f1b885a46bb&")
         .setDescription(
             [
-                "Select a dinosaur below to toggle its ping role.",
+                "**Select a dinosaur below to toggle its ping role.**",
                 "",
                 "> • Select once to **add** the role",
                 "> • Select again later to **remove** it",
+                "> • Use the **add all dino roles** button if you want a ping for every dino.",
+                "> • Use the **remove all dino roles** button if you want to delete all dino's.",
                 "> • You can have **multiple** dinosaur roles at the same time",
             ].join("\n")
         );

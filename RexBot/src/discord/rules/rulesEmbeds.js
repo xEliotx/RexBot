@@ -7,9 +7,11 @@ const COLORS = {
     pack: '#6234bd',
 };
 
-const RULES_VERSION = "v1.0";
-const RULES_UPDATED = "01/02/2026";
+const RULES_VERSION = "v2.0";
+const RULES_UPDATED = "12/04/2026";
 
+const INDENT = " ";
+const INDENT2 = "  ";
 
 export const rulesPosts = [
     {
@@ -17,8 +19,8 @@ export const rulesPosts = [
         channelId: "1462648723254411366",
         embed: new EmbedBuilder()
             .setColor(COLORS.herbivore)
-            .setTitle("🌿 Herbivore Rules")
-        	.setThumbnail("https://media.discordapp.net/attachments/778652435227869214/1469882190878740695/Pachycephalosaurus-ec20045c.png?ex=698945f7&is=6987f477&hm=e321e9a0d05091bcfa42e1a24daea414d41dd28a50d287d0e58db76bdc73674c&=&format=webp&quality=lossless")
+            .setTitle("🌿 Herbivore Rules - Includes Omnivores")
+            .setThumbnail("https://media.discordapp.net/attachments/778652435227869214/1469882190878740695/Pachycephalosaurus-ec20045c.png?ex=698945f7&is=6987f477&hm=e321e9a0d05091bcfa42e1a24daea414d41dd28a50d287d0e58db76bdc73674c&=&format=webp&quality=lossless")
             .setImage("https://cdn.discordapp.com/attachments/778652435227869214/1485688543958270002/HerbivoreRules.png?ex=69c2c6c7&is=69c17547&hm=bcf134445fb23f4672100fb207326ba08a414c109d333ecc0336ad1670b814b0&")
             .setDescription(
                 [
@@ -29,70 +31,61 @@ export const rulesPosts = [
                     "",
                     "🩸 **1) Combat **",
                     "> • Herbivores **MAY** initiate combat.",
-                    "> • You are **DIRECTLY ALLOWED** to attack other dino's on sight.",
+                    "> • You are **DIRECTLY ALLOWED** to attack other dinosaurs on sight.",
+                    "> • You are **NOT** allowed to change skins during combat, with the purpose of escaping/missleading your opposition.",
+                    "> • **No group hopping during combat**",
+                    `> ${INDENT}◦ Only after the fight has ended, new members can join your current group`,
+                    `> ${INDENT}◦ Unparking a dinosaur and rejoining your group is also classed as group hopping.`,
+                    `> ${INDENT}◦ You can only rejoin your group once the fight has ended.`,
                     "",
                     "",
-                    "🔁 **2) Disengage & Cooldown**",
-                    "> • Chasing after safety is achieved = revenge killing",
-                    "> • After successful defense, herbivores should relocate or de-escalate",
+                    "🦴 **2) Area & Body Rules**",
+                    "> • Body or carcass camping is **allowed**",
+                    `> ${INDENT}◦ This includes using body's as bait.`,
+                    `> ${INDENT}◦ This also includes all herbivores except **Triceratops** and **stegosaurus**`,
+                    `> ${INDENT}◦ **Triceratops** and **stegosaurus** can stay near corpses, **only** if the fight is still active`,
+                    `> ${INDENT}◦ Once the fight has finished **Triceratops** and **stegosaurus** can heal then move on`,
+                    "> • Passing through a carcass area is allowed as a **Triceratops** or **stegosaurus** — lingering is not.",
+                    `> ${INDENT}◦ unless your recovering from a fight`,
                     "",
                     "",
-                    "🦴 **3) Area & Body Rules**",
-                    "> • Body or carcass camping is **allowed**, this includes using body's as bait.",
-                    ">   ◦ This includes all herbivores except **Triceratops** and **stegosaurus**",
-                    "> • Passing through a carcass area is allowed — lingering is not.",
-                    ">   ◦ unless your recovering from a fight",
-                    "",
-                    "",
-                    "👥 **4) Group Limits & Herd Behavior**",
+                    "👥 **3) Group Limits & Herd Behavior**",
                     "> • All species must follow server group limits",
-                    ">   ◦ see **Pack Limit Rules** for details - <#1466464861289447664>",
+                    `> ${INDENT}◦ see **Pack Limit Rules** for details`,
+                    `> ${INDENT}◦ <#1466464861289447664>`,
                     "",
                     "",
-                    "🐣 **5) Juvenile Protection**",
-                    "> • Adults may defend juveniles of their own species only",
-                    "> • Juveniles may NOT be used as bait, shields, or aggro tools",
+                    "🐣 **4) Juvenile Protection**",
+                    "> • Adults may only protect juvenial's that are under 40% growth.",
+                    `> ${INDENT}◦ After 40% these count towards the mix pack herd limits.`,
+                    `> ${INDENT}◦ see **Pack Limit Rules** for details`,
+                    `> ${INDENT}◦ <#1466464861289447664>`,
                     "",
                     "",
-                    "⚠️ **6) Escalation & Behavior**",
-                    "> • Herbivores must show clear escalation when possible:",
-                    ">   ◦ Threat calls",
-                    ">   ◦ Posturing",
-                    ">   ◦ Warning charges",
-                    "> • Instant lethal force without escalation may be ruled unrealistic",
-                    "",
-                    "",
-                    "💧 **7) Water Etiquette**",
-                    "> • Permanent water denial is not allowed",
-                    "> • Large herds must allow reasonable access to others",
-                    "",
-                    "",
-                    "🔌 **8) Combat Logging**",
+                    "🔌 **5) Combat Logging**",
                     "> • Logging is **NOT allowed** while:",
-                    ">   ◦ In combat",
-                    ">   ◦ Being actively hunted",
-                    ">   ◦ Using the parking system to avoid combat",
+                    `> ${INDENT}◦ In combat, unless your in a position of safety - E.g. A Pachycephalosaurus jumping onto a rock.`,
+                    `> ${INDENT}◦ This also means being inside of a bush and having time to logout.`,
+                    ">  • Using the parking system to avoid combat",
                     "",
                     "",
-                    "🧠 **9) Common Sense & Staff Discretion**",
-                    "> • Clearly exploitative, meta, or unrealistic behavior may be punished",
-                    "> • Staff decisions are final, even if a scenario is not listed",
+                    "❌ **6) Scouting or luring**",
+                    "> • Scouting or luring as a Beipiaosaurus for other species is not allowed.",
+                    `> ${INDENT}◦ E.g. A Beipiaosaurus acting friendly with the intention to lure dinosaurs to the water for a Deinosuchus.`,
                     "",
                     "",
-                    "🦕🦖 **10) Stegosaurus & Triceratops Mixed Herd Exception**",
-                    "> • Allowed: **ONE (1) Stego + ONE (1) Trike**",
-                    "> • No additional Stegos, Trikes, or other herbivores may join",
-                    "> • This exception is for travel and defense only",
+                    "⚖️ **7) General Conduct**",
+                    "> • No exploiting bugs, hitboxes, or animations.",
+                    "> • No stream sniping or metagaming.",
+                    "> • No rule lawyering during fights — report issues after.",
+                    `> ${INDENT}◦ Report issues using the correct channels - <#1467572329444938024>.`,
+                    `> ${INDENT}◦ Direct messages to any member of staff will not be accepted.`,
+                    "> • Staff and admins have final say in all situations.",
                     "",
                     "",
-                    "<a:68523animatedarrowgreen:1467450531667771665> **11)Clarifications**",
-                    "> • If one dies, the pair may not be replaced until the group fully disbands",
-                    "> • All herbivore combat and escalation rules still apply",
-                    "> • Abuse of this exception may result in punishment or loss of privileges",
                 ].join("\n")
             )
             .setFooter({ text: `Staff may enforce additional rulings if needed. Play fair, stay realistic, survive 🌿\n Rules Version: ${RULES_VERSION} | Updated: ${RULES_UPDATED}` })
-            .setTimestamp(),
     },
 
     {
@@ -101,7 +94,7 @@ export const rulesPosts = [
         embed: new EmbedBuilder()
             .setColor(COLORS.carnivore)
             .setTitle("🥩 Carnivore Rules")
-        	.setThumbnail("https://media.discordapp.net/attachments/778652435227869214/1469882209791115324/Pteranodon-75fd074e.png?ex=698945fb&is=6987f47b&hm=8eaf5ad83f8a224c33fb10fb803cad59eb785b8f86edceae15a6540ec2bfd3a2&=&format=webp&quality=lossless")
+            .setThumbnail("https://media.discordapp.net/attachments/778652435227869214/1469882209791115324/Pteranodon-75fd074e.png?ex=698945fb&is=6987f47b&hm=8eaf5ad83f8a224c33fb10fb803cad59eb785b8f86edceae15a6540ec2bfd3a2&=&format=webp&quality=lossless")
             .setImage("https://cdn.discordapp.com/attachments/778652435227869214/1485687300561174598/CarnivoreRules.png?ex=69c2c59f&is=69c1741f&hm=534d5b58de26a806891fcc8adbd88b2cb1dd4a7643500234aeaa691308dbc919&")
             .setDescription(
                 [
@@ -111,47 +104,63 @@ export const rulesPosts = [
                     "",
                     "",
                     "🍖 **1) Hunting & Combat**",
-                    "> • Hunt for food, survival, territory, or self-defense",
-                    "> • Do not repeatedly target the same player/group after a successful kill",
-                    "> • **Third partying is NOT allowed unless you engage with both parties** — othwerise do not interfere in other fights",
+                    "> • Hunt for food, survival, territory, or self-defense.",
+                    "> • **Third partying is NOT allowed unless you engage with both parties** — othwerise do not interfere in other fights.",
+                    "> • You are **NOT** allowed to change skins during combat, with the purpose of escaping/missleading your opposition.",
+                    "> • **No group hopping during combat**",
+                    `> ${INDENT}◦ Only after the fight has ended, new members can join your current group`,
+                    `> ${INDENT}◦ Unparking a dinosaur and rejoining your group is also classed as group hopping.`,
+                    `> ${INDENT}◦ You can only rejoin your group once the fight has ended.`,
                     "",
                     "",
-                    "🩸 **2) Body & Feeding Rules**",
-                    "> • The body belongs to the killer or hunting group",
-                    "> • Challenging for a body is allowed only after the initial fight has ended",
-                    "> • No guarding bodies indefinitely — eat, then move on",
+                    "👥 **2) Grouping**",
+                    "> • No mix-packing or mix-coordinating with other species (unless stated otherwise).",
                     "",
                     "",
-                    "👥 **3) Grouping**",
-                    "> • No mix-packing or mix-coordinating with other species (unless stated otherwise)",
-                    "> • Groups must stay reasonably close — no map-wide coordination",
-                    "> • Hatchling protection must be realistic, not exploited",
+                    "🏃 **3) Chasing & Escaping**",
+                    "> • No chase baiting or stamina draining without intent to kill.",
+                    "> • No body-blocking or terrain exploits for unfair kills.",
                     "",
                     "",
-                    "🏃 **4) Chasing & Escaping**",
-                    "> • No chase baiting or stamina draining without intent to kill",
-                    "> • If prey escapes and breaks line of sight, the hunt should reasonably end",
-                    "> • No body-blocking or terrain exploits for unfair kills",
+                    "🐣 **4) Juvenile Protection**",
+                    "> • Adults may only protect juvenial's that are under 40% growth, and are of the same species.",
+                    `> ${INDENT}◦ After 40% these count towards the pack limits.`,
+                    `> ${INDENT}◦ see **Pack Limit Rules** for details`,
+                    `> ${INDENT}◦ <#1466464861289447664>`,
                     "",
                     "",
-                    "⚖️ **5) General Conduct**",
-                    "> • No exploiting bugs, hitboxes, or animations",
-                    "> • No stream sniping or metagaming",
-                    "> • No rule lawyering during fights — report issues after",
-                    "> • Admins have final say in all situations",
+                    "🔌 **5) Combat Logging**",
+                    "> • Logging is **NOT allowed** while:",
+                    `> ${INDENT}◦ In combat, unless your in a position of safety - E.g. A Omniraptor jumping onto a rock.`,
+                    `> ${INDENT}◦ Using the parking system to avoid combat`,
+                    "",
+                    "",
+                    "❌ **6) Scouting or luring**",
+                    "> • Scouting or luring as a Beipiaosaurus or Pteranodon for other species is not allowed.",
+                    `> ${INDENT}◦ E.g. A Pteranodon 1 calling above dinosaurs to alert players of their location.`,
+                    "",
+                    "",
+                    "⚖️ **7) General Conduct**",
+                    "> • No exploiting bugs, hitboxes, or animations.",
+                    "> • No stream sniping or metagaming.",
+                    "> • No rule lawyering during fights — report issues after.",
+                    `> ${INDENT}◦ Report issues using the correct channels - <#1467572329444938024>.`,
+                    `> ${INDENT}◦ Direct messages to any member of staff will not be accepted.`,
+                    "> • Staff and admins have final say in all situations.",
+                    "",
+                    "",
                 ].join("\n")
             )
-            .setFooter({ text: `Rules Version: ${RULES_VERSION} | Updated: ${RULES_UPDATED}` })
-            .setTimestamp(),
+            .setFooter({ text: `Staff may enforce additional rulings if needed. Play fair, stay realistic, survive 🥩\n Rules Version: ${RULES_VERSION} | Updated: ${RULES_UPDATED}` })
     },
 
     {
         key: "rules_general",
         channelId: "1462648417120682014",
         embed: new EmbedBuilder()
-            .setColor(COLORS.general) // neutral / official
+            .setColor(COLORS.general)
             .setTitle("📜 General Server Rules")
-        	.setThumbnail("https://media.discordapp.net/attachments/778652435227869214/1469881920799375452/Beipiaosaurus-62e0cfb3.png?ex=698945b7&is=6987f437&hm=415cccb6650d75c31adbaddf743dc4e6f2f2ecb2dd66902bce0e4ae6709be2d9&=&format=webp&quality=lossless")
+            .setThumbnail("https://media.discordapp.net/attachments/778652435227869214/1469881920799375452/Beipiaosaurus-62e0cfb3.png?ex=698945b7&is=6987f437&hm=415cccb6650d75c31adbaddf743dc4e6f2f2ecb2dd66902bce0e4ae6709be2d9&=&format=webp&quality=lossless")
             .setImage("https://cdn.discordapp.com/attachments/778652435227869214/1485701019202621471/GeneralRules.png?ex=69c2d265&is=69c180e5&hm=2d204ac693a10f512faa1ca358f6d5aa8f800287ad7a234d8329f170a0a30a8d&")
             .setDescription(
                 [
@@ -161,9 +170,10 @@ export const rulesPosts = [
                     "",
                     "",
                     "🎮 **Gameplay Rules**",
-                    "> • **No Mixpacking** — different carnivore species may not pack, hunt, travel, or fight together.",
-                    "> • **No Exploits or Loopholes** — attempting to find, abuse, or manipulate exploits or loopholes in rules or mechanics is strictly prohibited.",
+                    "> • **No Mixpacking** — Different carnivore species may not pack, hunt, travel, or fight together.",
+                    "> • **No Exploits or Loopholes** — Attempting to find, abuse, or manipulate exploits or loopholes in rules or mechanics is strictly prohibited.",
                     "> • **Evidence** — Using f2 to record gameplay is a must. This allows us to come to a verdict on any rulebreak/bug that occurs.",
+                    `> ${INDENT}◦ Other clipping softwares can be used in certain situations.`,
                     "",
                     "",
                     "💬 **Chat & Community Rules**",
@@ -179,6 +189,7 @@ export const rulesPosts = [
                     "> • Bullying, harassment, or malicious behavior",
                     "> • Discrimination of any kind",
                     "> • Derogatory language",
+                    "> • No promoting other servers in game or discord.",
                     "> • Spreading misinformation",
                     "> • Religion, politics, or war-related discussions",
                     "> • Recruitment or advertisement",
@@ -190,7 +201,7 @@ export const rulesPosts = [
                     "> • Statuses promoting terrorism, discrimination, or harmful intent",
                     "> • Ban evasion",
                     "> • Intentionally ignoring or breaking server rules",
-                    "> • Enlgish language only in text channels. Voice channels are not prohibited to follow this rule",
+                    "> • English language only in text channels. Voice channels are not prohibited to follow this rule",
                     "",
                     "",
                     "🚨 **Zero Tolerance Policy**",
@@ -218,8 +229,7 @@ export const rulesPosts = [
                     "<a:68523animatedarrowgreen:1467450531667771665> **Happy hunting and enjoy your time on the server!**",
                 ].join("\n")
             )
-            .setFooter({ text: `Rules Version: ${RULES_VERSION} | Updated: ${RULES_UPDATED}` })
-            .setTimestamp(),
+            .setFooter({ text: `Staff may enforce additional rulings if needed.\n Rules Version: ${RULES_VERSION} | Updated: ${RULES_UPDATED}` })
     },
 
     {
@@ -228,7 +238,7 @@ export const rulesPosts = [
         embed: new EmbedBuilder()
             .setColor(COLORS.pack)
             .setTitle("☯️ Pack Limit Server Rules")
-        	.setThumbnail("https://media.discordapp.net/attachments/778652435227869214/1469881707279810641/Troodon-5fd83e64.png?ex=69894584&is=6987f404&hm=73c79963c842f7b1c6ee76f385502c762ba33add8320136413d17deb7201d801&=&format=webp&quality=lossless")
+            .setThumbnail("https://media.discordapp.net/attachments/778652435227869214/1469881707279810641/Troodon-5fd83e64.png?ex=69894584&is=6987f404&hm=73c79963c842f7b1c6ee76f385502c762ba33add8320136413d17deb7201d801&=&format=webp&quality=lossless")
             .setImage("https://cdn.discordapp.com/attachments/778652435227869214/1485690305004044298/PackLimits.png?ex=69c2c86b&is=69c176eb&hm=1f1c41f599a2d6386ae54b879ef22ec284b427b4170eba0e2186e73b6913ae95&")
             .setDescription(
                 [
@@ -243,10 +253,10 @@ export const rulesPosts = [
                     "> • **Beipiaosaurus** - **Unlimited** per pack",
                     "> • **Hypsilophodon** - **Unlimited** per pack",
                     "> • **Gallimimus** - **15** per pack",
-                    "> • **Pachycephalosaurus** - **10** per pack",
+                    "> • **Pachycephalosaurus** - **11** per pack",
                     "> • **Maiasaura** - **6** per pack",
                     "> • **Tenontosaurus** - **6** per pack",
-                    "> • **Diabloceratops** - **5** per pack",
+                    "> • **Diabloceratops** - **4** per pack",
                     "> • **Stegosaurus** - **3** per pack",
                     "> • **Triceratops** - **2** per pack",
                     "",
@@ -262,9 +272,9 @@ export const rulesPosts = [
                     "> • **Dryosaurus** - **0** points.",
                     "> • **Beipiaosaurus** - **0** points.",
                     "> • **Hypsilophodon** - **0** points",
-                    "> • **Gallimimus** - **5** points",
+                    "> • **Gallimimus** - **2** points",
                     "> • **Pachycephalosaurus** - **5** points",
-                    "> • **Maiasaura** - **7** points",
+                    "> • **Maiasaura** - **15** points",
                     "> • **Tenontosaurus** - **10** points",
                     "> • **Diabloceratops** - **15** points",
                     "> • **Stegosaurus** - **20** points",
@@ -278,14 +288,14 @@ export const rulesPosts = [
                     "",
                     "",
                     "<a:68523animatedarrowgreen:1467450531667771665> **Carnivore Pack limits**",
-                    "You may only form a group with your own species, up to the limits below;",
-                    "❕Pteranodons are not included in this rule ❕",
+                    "> • You may only form a group with your own species, up to the limits below;",
+                    `> ${INDENT}◦ **Pteranodons are not included in this rule**`,
                     "",
                     "",
                     "🟠 **Carnivore's**",
                     "> • **Pteranodon** — **Unlimited**",
                     "> • **Troodon** — **20** per pack",
-                    "> • **Omniraptor** — **10** per pack",
+                    "> • **Omniraptor** — **12** per pack",
                     "> • **Herrerasaurus** — **12** per pack",
                     "> • **Dilophosaurus** — **6** per pack",
                     "> • **Ceratosaurus** — **4** per pack",
@@ -298,7 +308,7 @@ export const rulesPosts = [
                     "<a:68523animatedarrowgreen:1467450531667771665> **Pack limit violations may result in moderation action!**",
                 ].join("\n")
             )
-            .setFooter({ text: `Rules Version: ${RULES_VERSION} | Updated: ${RULES_UPDATED}` })
-            .setTimestamp(),
+            .setFooter({ text: `Staff may enforce additional rulings if needed. Play fair, stay realistic, survive ☯️\n Rules Version: ${RULES_VERSION} | Updated: ${RULES_UPDATED}` })
+
     },
 ];

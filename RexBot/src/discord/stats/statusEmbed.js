@@ -6,7 +6,7 @@ import { EmbedBuilder } from "discord.js";
 const STORE_PATH = path.resolve(process.cwd(), "data", "statusMessage.json");
 
 const SERVER_INFO = {
-    map: "Gateway",
+    map: "Gateway v0.21",
     location: "Europe",
     type: "Unofficial",
     growthSpeed: "1.25x",
@@ -158,6 +158,17 @@ function withTimeout(promise, ms, label = "Operation") {
     ]);
 }
 
+function getLondonTzLabel(date = new Date()) {
+    const tzPart = new Intl.DateTimeFormat("en-GB", {
+        timeZone: "Europe/London",
+        timeZoneName: "short",
+    })
+        .formatToParts(date)
+        .find((p) => p.type === "timeZoneName")?.value || "GMT";
+
+    return tzPart.toUpperCase();
+}
+
 async function loadStore() {
     try {
         if (!fs.existsSync(STORE_PATH)) return {};
@@ -193,6 +204,7 @@ async function lockStatusChannel(channel) {
 function buildStatusEmbed({ guild, online, restarting, playerCount, nextRestart, nowUtc }) {
     const countdown = formatCountdown(nextRestart.getTime() - nowUtc.getTime());
     const restartTime = formatLondonTime(nextRestart);
+    const londonTzLabel = getLondonTzLabel(nowUtc);
 
     let statusLine;
     let color;
@@ -232,21 +244,9 @@ function buildStatusEmbed({ guild, online, restarting, playerCount, nextRestart,
         )
         .addFields(
             {
-                name: "👥 Players",
-                value: online
-                    ? `**${playerCount == null ? "Unknown" : playerCount} / ${SERVER_INFO.maxPlayers}**`
-                    : `**Unknown / ${SERVER_INFO.maxPlayers}**`,
-                inline: true,
-            },
-            {
                 name: "📊 Capacity",
                 value: `\`${capacityBar}\`\n**${capacityPercent}%**`,
-                inline: true,
-            },
-            {
-                name: "\u200B",
-                value: "\u200B",
-                inline: true,
+                inline: false,
             },
 
             {
@@ -288,7 +288,7 @@ function buildStatusEmbed({ guild, online, restarting, playerCount, nextRestart,
             },
             {
                 name: "🌍 Time Zone",
-                value: "`UK Time`",
+                value: `\`${londonTzLabel}\``,
                 inline: true,
             },
             {

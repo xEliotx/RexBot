@@ -98,7 +98,7 @@ export function buildPopulationEmbed(speciesCounts) {
 
     const embed = new EmbedBuilder()
         .setTitle("🌍 Blood & Bone Ecosystem Tracker")
-        .setColor(0x57f287)
+        .setColor("#ffffff")
         .setFooter({
             text: `Population Dashboard • Updated: ${new Date().toLocaleString()}`,
         });
@@ -129,15 +129,18 @@ export function buildPopulationEmbed(speciesCounts) {
     const imbalanceText = getImbalanceText(carnivores, herbivores, omnivores);
 
     embed.addFields({
-        name: "🧬 Ecosystem Overview",
+        name: "🧬 Ecosystem Overview\n\u200B",
         value:
-            `🍖 **Carnivores:** \`${carnivores}\`\n` +
-            `🌿 **Herbivores:** \`${herbivores}\`\n` +
-            `🍄 **Omnivores:** \`${omnivores}\`\n` +
-            `🏆 **Dominant Carnivore:** ${dominantCarnivoreText}\n` +
-            `🏆 **Dominant Herbivore:** ${dominantHerbivoreText}\n` +
-            `🏆 **Dominant Omnivore:** ${dominantOmnivoreText}\n` +
-            `\n${imbalanceText}`,
+            `> 🍖 **Carnivores**  \`${carnivores}\`\n` +
+            `> 🌿 **Herbivores**  \`${herbivores}\`\n` +
+            `> 🍄 **Omnivores**  \`${omnivores}\`\n\n` +
+
+            `> <:Redtrophy:1492593450934206605> **Top Carnivore: **  ${dominantCarnivoreText}\n` +
+            `> <:GreenTrophy:1492593663547543812> **Top Herbivore: **  ${dominantHerbivoreText}\n` +
+            `> <:OrangeTrophy:1492593133987434706> **Top Omnivore: **  ${dominantOmnivoreText}\n\n` +
+
+            `━━━━━━━━━━━━━━━━━━\n` +
+            `${imbalanceText}`,
         inline: false,
     });
 
